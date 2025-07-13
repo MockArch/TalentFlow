@@ -2,6 +2,7 @@
 "use client"
 
 import * as React from 'react';
+import { addMonths, subMonths } from 'date-fns';
 import {
   Briefcase,
   Users,
@@ -32,6 +33,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { DashboardLayout } from '@/components/dashboard-layout';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { UserNav } from '@/components/user-nav';
 
 const quickActions = [
   { label: 'Add Candidate', icon: UserPlus, href: "/candidates" },
@@ -74,10 +76,30 @@ const EventIndicator = () => <div className="absolute bottom-1.5 left-1/2 -trans
 
 export default function Dashboard() {
   const [date, setDate] = React.useState<Date | undefined>(new Date('2025-07-13'));
+  const [currentMonth, setCurrentMonth] = React.useState(new Date('2025-07-01'));
   const interviewDates = [14, 15, 16, 18, 21];
+
+  const handlePrevMonth = () => {
+    setCurrentMonth(subMonths(currentMonth, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonth(addMonths(currentMonth, 1));
+  };
 
   return (
     <DashboardLayout>
+       <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-semibold font-headline">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Welcome back! Here&apos;s a quick overview of your hiring pipeline.
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+            <UserNav />
+        </div>
+      </div>
       <div className="flex flex-col gap-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
@@ -205,10 +227,10 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between">
                         <CardTitle>Interview Calendar</CardTitle>
                         <div className="flex items-center gap-2">
-                             <Button variant="outline" size="icon" className="h-8 w-8">
+                             <Button variant="outline" size="icon" className="h-8 w-8" onClick={handlePrevMonth}>
                                 <ChevronLeft className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="icon" className="h-8 w-8">
+                            <Button variant="outline" size="icon" className="h-8 w-8" onClick={handleNextMonth}>
                                 <ChevronRight className="h-4 w-4" />
                             </Button>
                         </div>
@@ -219,17 +241,18 @@ export default function Dashboard() {
                         mode="single"
                         selected={date}
                         onSelect={setDate}
+                        month={currentMonth}
+                        onMonthChange={setCurrentMonth}
                         className="p-0"
-                        month={new Date('2025-07-01')}
                         classNames={{
                           root: 'p-3',
                           months: 'space-y-4',
                           month: 'space-y-4',
                           caption_label: 'text-base font-medium',
                           head_row: 'flex justify-between w-full mb-2',
-                          head_cell: 'text-muted-foreground rounded-md w-10 font-normal text-sm',
+                          head_cell: 'text-muted-foreground rounded-md w-full font-normal text-sm',
                           row: 'flex w-full mt-2 justify-between',
-                          cell: 'h-10 w-10 text-center text-sm p-0 relative',
+                          cell: 'text-center text-sm p-0 relative',
                           day: 'w-full h-10',
                           day_selected: 'bg-primary text-primary-foreground hover:bg-primary/90 rounded-full',
                           day_today: 'bg-accent text-accent-foreground rounded-full',
