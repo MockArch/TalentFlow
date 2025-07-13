@@ -1,4 +1,7 @@
 
+"use client"
+
+import * as React from 'react';
 import { DashboardLayout } from '@/components/dashboard-layout';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,7 +20,7 @@ import {
 } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Briefcase, Users, UserCheck, PlusCircle, ArrowRight } from 'lucide-react';
+import { Briefcase, Users, UserCheck, PlusCircle, ArrowRight, Check, ChevronsUpDown } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import {
@@ -32,8 +35,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { users as panelists } from '@/lib/data';
+import { users as panelists, User } from '@/lib/data';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+
 
 const jobOpenings = [
   {
@@ -104,6 +109,99 @@ const statusColor: { [key: string]: string } = {
     Closed: 'bg-red-100 text-red-800 border-red-200',
 };
 
+function CreateJobDialog() {
+    const [selectedPanelists, setSelectedPanelists] = React.useState<User[]>([]);
+    const [open, setOpen] = React.useState(false);
+
+    return (
+     <Dialog>
+        <DialogTrigger asChild>
+            <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Job
+            </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-2xl">
+            <DialogHeader>
+                <DialogTitle>Create a New Job Opening</DialogTitle>
+                <DialogDescription>
+                    Fill out the details below to post a new job.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-6 py-4">
+                <div className="space-y-2">
+                    <Label htmlFor="job-title">Job Title</Label>
+                    <Input id="job-title" placeholder="e.g. Senior Frontend Developer" />
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="job-description">Job Description</Label>
+                    <Textarea id="job-description" placeholder="Enter a detailed job description..." rows={5} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="openings">Number of Openings</Label>
+                        <Input id="openings" type="number" placeholder="e.g. 2" />
+                    </div>
+                     <div className="space-y-2">
+                        <Label>Assign Panelists</Label>
+                        <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                                <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={open}
+                                className="w-full justify-between"
+                                >
+                                {selectedPanelists.length > 0
+                                    ? selectedPanelists.map(p => p.name).join(', ')
+                                    : "Select panelists..."}
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0">
+                                <Command>
+                                    <CommandInput placeholder="Search panelists..." />
+                                    <CommandList>
+                                        <CommandEmpty>No panelists found.</CommandEmpty>
+                                        <CommandGroup>
+                                            {panelists.map((panelist) => (
+                                            <CommandItem
+                                                key={panelist.email}
+                                                onSelect={() => {
+                                                    setSelectedPanelists(current => 
+                                                        current.some(p => p.email === panelist.email)
+                                                            ? current.filter(p => p.email !== panelist.email)
+                                                            : [...current, panelist]
+                                                    );
+                                                    setOpen(true);
+                                                }}
+                                            >
+                                                <Check
+                                                className={cn(
+                                                    "mr-2 h-4 w-4",
+                                                    selectedPanelists.some(p => p.email === panelist.email) ? "opacity-100" : "opacity-0"
+                                                )}
+                                                />
+                                                {panelist.name}
+                                            </CommandItem>
+                                            ))}
+                                        </CommandGroup>
+                                    </CommandList>
+                                </Command>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                </div>
+            </div>
+            <DialogFooter>
+                <Button variant="outline">Cancel</Button>
+                <Button type="submit">Create Job</Button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+    )
+}
+
 
 export default function JobsPage() {
   return (
@@ -114,57 +212,7 @@ export default function JobsPage() {
             <h1 className="text-3xl font-bold font-headline">Jobs</h1>
             <p className="text-lg text-muted-foreground mt-1">Open Positions</p>
           </div>
-          <Dialog>
-            <DialogTrigger asChild>
-                <Button>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Add Job
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-2xl">
-                <DialogHeader>
-                    <DialogTitle>Create a New Job Opening</DialogTitle>
-                    <DialogDescription>
-                        Fill out the details below to post a new job.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-6 py-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="job-title">Job Title</Label>
-                        <Input id="job-title" placeholder="e.g. Senior Frontend Developer" />
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="job-description">Job Description</Label>
-                        <Textarea id="job-description" placeholder="Enter a detailed job description..." rows={5} />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="openings">Number of Openings</Label>
-                            <Input id="openings" type="number" placeholder="e.g. 2" />
-                        </div>
-                         <div className="space-y-2">
-                            <Label htmlFor="panelists">Assign Panelists</Label>
-                             <Select>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select panelists (multi-select coming soon)" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {panelists.map((p) => (
-                                    <SelectItem key={p.email} value={p.email}>
-                                      {p.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                        </div>
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button variant="outline">Cancel</Button>
-                    <Button type="submit">Create Job</Button>
-                </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <CreateJobDialog />
         </div>
 
         <Tabs defaultValue="all">
