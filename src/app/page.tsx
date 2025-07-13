@@ -17,6 +17,8 @@ import {
   FileText,
   TrendingUp,
   Clock,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -68,8 +70,7 @@ const upcomingInterviews = [
     { date: "21", month: "Jul", name: "Alex Ray", role: "Final Interview", time: "1:52 PM", interviewer: "Alice Williams, Hiring Manager" },
 ];
 
-// Helper to add event dots to calendar days
-const EventIndicator = () => <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-primary" />;
+const EventIndicator = () => <div className="absolute bottom-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-primary" />;
 
 export default function Dashboard() {
   const [date, setDate] = React.useState<Date | undefined>(new Date('2025-07-13'));
@@ -78,7 +79,7 @@ export default function Dashboard() {
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Dashboard</h1>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -198,7 +199,17 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <Card className="lg:col-span-2">
                 <CardHeader>
-                    <CardTitle>Interview Calendar</CardTitle>
+                    <div className="flex items-center justify-between">
+                        <CardTitle>Interview Calendar</CardTitle>
+                        <div className="flex items-center gap-2">
+                             <Button variant="outline" size="icon" className="h-8 w-8">
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <Button variant="outline" size="icon" className="h-8 w-8">
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
                 </CardHeader>
                 <CardContent>
                     <Calendar
@@ -216,11 +227,11 @@ export default function Dashboard() {
                           day_outside: 'text-muted-foreground opacity-50',
                         }}
                         components={{
-                            DayContent: ({ date, ...props }) => {
-                                const isInterviewDay = interviewDates.includes(date.getDate());
+                            DayContent: ({ date: d, ...props }) => {
+                                const isInterviewDay = interviewDates.includes(d.getDate()) && d.getMonth() === 6 && d.getFullYear() === 2025;
                                 return (
-                                    <div className="relative">
-                                        <span>{props.children}</span>
+                                    <div className="relative flex justify-center items-center h-10 w-full">
+                                        <span>{d.getDate()}</span>
                                         {isInterviewDay && <EventIndicator />}
                                     </div>
                                 );
