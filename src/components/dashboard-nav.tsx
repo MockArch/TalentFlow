@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSidebar, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { LayoutDashboard, Users, Settings, LogOut, Briefcase, Upload, BarChart, HelpCircle, GitMerge } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, LogOut, Briefcase, Upload, BarChart, HelpCircle, Puzzle } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -11,8 +11,8 @@ const navItems = [
   { href: '/panelists', label: 'Panelists', icon: Users },
   { href: '/upload-resume', label: 'Upload Resume', icon: Upload },
   { href: '/analytics', label: 'Analytics', icon: BarChart },
-  { href: '/integrations', label: 'Integrations', icon: GitMerge },
-  { href: '/help', label: 'Help', icon: HelpCircle },
+  { href: '/integrations', label: 'Integrations', icon: Puzzle },
+  { href: '/help', 'label': 'Help', icon: HelpCircle },
 ];
 
 export function DashboardNav() {
