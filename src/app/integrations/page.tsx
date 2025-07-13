@@ -1,10 +1,13 @@
 
+'use client';
+
+import * as React from 'react';
 import { DashboardLayout } from '@/components/dashboard-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Briefcase, Slack } from 'lucide-react';
 
-const integrations = [
+const initialIntegrations = [
     { name: 'Slack', description: 'Get interview reminders and candidate updates in your Slack channels.', icon: Slack, connected: true },
     { name: 'Google Calendar', description: 'Automatically sync interviews with your Google Calendar.', icon: 'https://www.google.com/images/icons/product/calendar-32.png', connected: true },
     { name: 'Greenhouse', description: 'Sync candidate data and job postings with your Greenhouse account.', icon: Briefcase, connected: false },
@@ -12,6 +15,18 @@ const integrations = [
 
 
 export default function IntegrationsPage() {
+  const [integrations, setIntegrations] = React.useState(initialIntegrations);
+
+  const handleToggleConnection = (integrationName: string) => {
+    setIntegrations(currentIntegrations => 
+        currentIntegrations.map(integration => 
+            integration.name === integrationName 
+                ? { ...integration, connected: !integration.connected }
+                : integration
+        )
+    );
+  };
+
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-8">
@@ -35,7 +50,11 @@ export default function IntegrationsPage() {
                        </div>
                     </CardHeader>
                     <CardContent>
-                       <Button variant={integration.connected ? 'secondary' : 'default'} className="w-full">
+                       <Button 
+                         variant={integration.connected ? 'secondary' : 'default'} 
+                         className="w-full"
+                         onClick={() => handleToggleConnection(integration.name)}
+                       >
                          {integration.connected ? 'Disconnect' : 'Connect'}
                        </Button>
                     </CardContent>
