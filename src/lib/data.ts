@@ -1,10 +1,46 @@
 import type { User, Candidate, Interview } from './types';
 
 export const users: User[] = [
-  { name: 'Alice Johnson', email: 'alice@example.com', avatar: 'https://placehold.co/40x40.png?text=AJ' },
-  { name: 'Bob Williams', email: 'bob@example.com', avatar: 'https://placehold.co/40x40.png?text=BW' },
-  { name: 'Charlie Brown', email: 'charlie@example.com', avatar: 'https://placehold.co/40x40.png?text=CB' },
-  { name: 'Diana Miller', email: 'diana@example.com', avatar: 'https://placehold.co/40x40.png?text=DM' },
+  { 
+    name: 'Alice Johnson', 
+    email: 'alice@example.com', 
+    avatar: 'https://placehold.co/40x40.png?text=AJ',
+    role: 'Senior Software Engineer',
+    phone: '+1 (111) 222-3333',
+    expertise: 'React, Node.js, System Design',
+    availability: 'Mon, Wed, Fri afternoons',
+    status: 'Active',
+  },
+  { 
+    name: 'Bob Williams', 
+    email: 'bob@example.com', 
+    avatar: 'https://placehold.co/40x40.png?text=BW',
+    role: 'Engineering Manager',
+    phone: '+1 (222) 333-4444',
+    expertise: 'Team Leadership, Architecture',
+    availability: 'Tuesdays & Thursdays',
+    status: 'Active',
+  },
+  { 
+    name: 'Charlie Brown', 
+    email: 'charlie@example.com', 
+    avatar: 'https://placehold.co/40x40.png?text=CB',
+    role: 'Lead Designer',
+    phone: '+1 (333) 444-5555',
+    expertise: 'UX Research, Prototyping, Figma',
+    availability: 'Flexible with 2 days notice',
+    status: 'Active',
+  },
+  { 
+    name: 'Diana Miller', 
+    email: 'diana@example.com', 
+    avatar: 'https://placehold.co/40x40.png?text=DM',
+    role: 'Product Manager',
+    phone: '+1 (444) 555-6666',
+    expertise: 'Roadmapping, User Stories, Agile',
+    availability: 'Mondays 10am-12pm',
+    status: 'Inactive',
+  },
 ];
 
 export const candidates: Candidate[] = [

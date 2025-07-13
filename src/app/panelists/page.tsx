@@ -1,14 +1,7 @@
 
 import { DashboardLayout } from '@/components/dashboard-layout';
 import { users as panelists } from '@/lib/data';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -18,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Mail, Phone, BrainCircuit, CalendarClock } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -87,40 +80,24 @@ export default function PanelistsPage() {
           </Dialog>
         </div>
 
-        <div className="rounded-lg border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {panelists.map((panelist) => (
-                <TableRow key={panelist.email}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={panelist.avatar} alt={panelist.name} data-ai-hint="person" />
-                        <AvatarFallback>{panelist.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-medium">{panelist.name}</div>
-                      </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {panelists.map((panelist) => (
+            <Card key={panelist.email} className="flex flex-col">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-4">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={panelist.avatar} alt={panelist.name} data-ai-hint="person" />
+                          <AvatarFallback>{panelist.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                            <CardTitle className="text-lg">{panelist.name}</CardTitle>
+                            <CardDescription>{panelist.role}</CardDescription>
+                        </div>
                     </div>
-                  </TableCell>
-                  <TableCell>{panelist.email}</TableCell>
-                   <TableCell>
-                    <Badge variant="secondary">Active</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
+                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
+                        <Button aria-haspopup="true" size="icon" variant="ghost" className="h-8 w-8">
                           <MoreHorizontal className="h-4 w-4" />
                           <span className="sr-only">Toggle menu</span>
                         </Button>
@@ -130,11 +107,33 @@ export default function PanelistsPage() {
                         <DropdownMenuItem>Deactivate</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                </div>
+              </CardHeader>
+              <CardContent className="flex-grow space-y-4 text-sm text-muted-foreground">
+                 <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4" />
+                    <span>{panelist.email}</span>
+                 </div>
+                 <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4" />
+                    <span>{panelist.phone}</span>
+                 </div>
+                 <div className="flex items-center gap-2">
+                    <BrainCircuit className="h-4 w-4" />
+                    <span>{panelist.expertise}</span>
+                 </div>
+                 <div className="flex items-start gap-2">
+                    <CalendarClock className="h-4 w-4 mt-0.5" />
+                    <span>{panelist.availability}</span>
+                 </div>
+              </CardContent>
+              <CardFooter>
+                 <Badge variant={panelist.status === 'Active' ? 'secondary' : 'destructive'} className={panelist.status === 'Active' ? 'bg-green-100 text-green-800' : ''}>
+                    {panelist.status}
+                </Badge>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
       </div>
     </DashboardLayout>

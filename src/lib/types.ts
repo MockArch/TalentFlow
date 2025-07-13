@@ -2,6 +2,11 @@ export type User = {
   name: string;
   email: string;
   avatar: string;
+  role?: string;
+  phone?: string;
+  expertise?: string;
+  availability?: string;
+  status?: 'Active' | 'Inactive';
 };
 
 export type Candidate = {
