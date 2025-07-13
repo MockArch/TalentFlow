@@ -3,14 +3,21 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSidebar, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { LayoutDashboard, Users, Settings, LogOut, Briefcase, Upload, BarChart, HelpCircle, Puzzle } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, LogOut, Briefcase, Upload, BarChart, HelpCircle, Puzzle, User } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/jobs', label: 'Jobs', icon: Briefcase },
   { href: '/candidates', label: 'Candidates', icon: Users },
-  { href: '/interviews', label: 'Interviews', icon: BarChart },
+  { href: '/panelists', label: 'Panelists', icon: User },
+  { href: '/upload-resumes', label: 'Upload Resumes', icon: Upload },
+  { href: '/analytics', label: 'Analytics', icon: BarChart },
+  { href: '/integrations', label: 'Integrations', icon: Puzzle },
+];
+
+const secondaryNavItems = [
   { href: '/settings', label: 'Settings', icon: Settings },
+  { href: '/help', label: 'Help', icon: HelpCircle },
 ];
 
 export function DashboardNav() {
@@ -47,7 +54,22 @@ export function DashboardNav() {
         </SidebarMenu>
       </div>
        <div className="mt-auto flex flex-col gap-2 p-4 border-t border-sidebar-border">
-          <SidebarMenu>
+          <SidebarMenu className="space-y-1">
+               {secondaryNavItems.map((item) => (
+                 <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === item.href}
+                      className="h-10 justify-start text-sm font-normal text-sidebar-foreground/80 data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[active=true]:font-medium"
+                      tooltip={{children: item.label, side:"right", align:"center"}}
+                    >
+                      <Link href={item.href}>
+                        <item.icon className="h-5 w-5" />
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
                <SidebarMenuItem>
                   <SidebarMenuButton asChild className="h-10 justify-start text-sm font-normal text-sidebar-foreground/80" tooltip={{children: "Logout", side:"right", align:"center"}}>
                     <Link href="/login">

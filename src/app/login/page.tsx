@@ -17,10 +17,10 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-gray-100 dark:bg-gray-800 p-12">
         <div className="w-full max-w-md">
             <div className="text-left space-y-4">
-                 <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gray-800 text-white font-bold text-2xl">
-                    N
+                 <div className="h-12 w-12 flex items-center justify-center rounded-md bg-primary text-primary-foreground font-bold text-2xl">
+                    T
                 </div>
-                <h1 className="text-4xl font-bold text-gray-800 dark:text-white">Welcome to HarborView</h1>
+                <h1 className="text-4xl font-bold text-gray-800 dark:text-white">Welcome to TalentFlow</h1>
                 <p className="text-gray-600 dark:text-gray-300">
                     The intelligent recruitment partner that helps you find, interview, and hire the best talent.
                 </p>
