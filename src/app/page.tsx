@@ -16,8 +16,6 @@ import {
   UserCheck,
   FileText,
   TrendingUp,
-  ChevronLeft,
-  ChevronRight,
   Clock,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -70,8 +68,12 @@ const upcomingInterviews = [
     { date: "21", month: "Jul", name: "Alex Ray", role: "Final Interview", time: "1:52 PM", interviewer: "Alice Williams, Hiring Manager" },
 ];
 
+// Helper to add event dots to calendar days
+const EventIndicator = () => <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-primary" />;
+
 export default function Dashboard() {
   const [date, setDate] = React.useState<Date | undefined>(new Date('2025-07-13'));
+  const interviewDates = [14, 15, 16, 18, 21];
 
   return (
     <DashboardLayout>
@@ -199,7 +201,7 @@ export default function Dashboard() {
                     <CardTitle>Interview Calendar</CardTitle>
                 </CardHeader>
                 <CardContent>
-                     <Calendar
+                    <Calendar
                         mode="single"
                         selected={date}
                         onSelect={setDate}
@@ -207,8 +209,22 @@ export default function Dashboard() {
                         month={new Date('2025-07-01')}
                         classNames={{
                           head_cell: 'w-full font-normal text-sm',
-                          cell: 'w-full text-center text-sm p-0',
+                          cell: 'w-full text-center text-sm p-0 relative',
                           day: 'w-full h-10',
+                          day_selected: 'bg-primary text-primary-foreground hover:bg-primary/90 rounded-md',
+                          day_today: 'bg-accent text-accent-foreground rounded-md',
+                          day_outside: 'text-muted-foreground opacity-50',
+                        }}
+                        components={{
+                            DayContent: ({ date, ...props }) => {
+                                const isInterviewDay = interviewDates.includes(date.getDate());
+                                return (
+                                    <div className="relative">
+                                        <span>{props.children}</span>
+                                        {isInterviewDay && <EventIndicator />}
+                                    </div>
+                                );
+                            },
                         }}
                      />
                 </CardContent>

@@ -20,7 +20,7 @@ export function Header() {
       </div>
       {/* The h1 title is now rendered on the page itself */}
       <div className="ml-auto flex items-center gap-4">
-        {/* UserNav could be here if needed in the future, but it's not in the provided design */}
+        <UserNav />
       </div>
     </header>
   );
