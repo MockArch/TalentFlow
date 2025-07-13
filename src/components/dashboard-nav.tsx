@@ -11,6 +11,7 @@ const navItems = [
   { href: '/jobs', label: 'Jobs', icon: Briefcase },
   { href: '/candidates', label: 'Candidates', icon: Users },
   { href: '/panelists', label: 'Panelists', icon: User },
+  { href: '/upload-resumes', label: 'Upload Resumes', icon: Upload },
   { href: '/integrations', label: 'Integrations', icon: Puzzle },
 ];
 
