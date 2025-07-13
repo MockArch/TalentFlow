@@ -72,12 +72,29 @@ const upcomingInterviews = [
     { date: "21", month: "Jul", name: "Alex Ray", role: "Final Interview", time: "1:52 PM", interviewer: "Alice Williams, Hiring Manager" },
 ];
 
-const EventIndicator = () => <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-primary" />;
+const EventIndicator = ({ count }: { count: number }) => (
+    <div className="absolute top-0.5 right-0.5 h-4 w-4 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+        {count}
+    </div>
+);
+
 
 export default function Dashboard() {
   const [date, setDate] = React.useState<Date | undefined>(new Date('2025-07-13'));
   const [currentMonth, setCurrentMonth] = React.useState(new Date('2025-07-01'));
-  const interviewDates = [14, 15, 16, 18, 21];
+  
+  const interviewCounts = React.useMemo(() => {
+    const counts: { [day: number]: number } = {};
+    upcomingInterviews.forEach(interview => {
+        const day = parseInt(interview.date, 10);
+        if (counts[day]) {
+            counts[day]++;
+        } else {
+            counts[day] = 1;
+        }
+    });
+    return counts;
+  }, []);
 
   const handlePrevMonth = () => {
     setCurrentMonth(subMonths(currentMonth, 1));
@@ -260,11 +277,11 @@ export default function Dashboard() {
                         }}
                         components={{
                             DayContent: ({ date: d }) => {
-                                const isInterviewDay = interviewDates.includes(d.getDate()) && d.getMonth() === 6 && d.getFullYear() === 2025;
+                                const interviewCount = (d.getMonth() === 6 && d.getFullYear() === 2025) ? interviewCounts[d.getDate()] : undefined;
                                 return (
                                     <div className="relative flex justify-center items-center h-10 w-10">
                                         <span>{d.getDate()}</span>
-                                        {isInterviewDay && <EventIndicator />}
+                                        {interviewCount && <EventIndicator count={interviewCount} />}
                                     </div>
                                 );
                             },
