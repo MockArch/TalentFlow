@@ -34,9 +34,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 const quickActions = [
-  { label: 'Add Candidate', icon: UserPlus },
-  { label: 'Schedule Interview', icon: CalendarPlus },
-  { label: 'Analyze Resume', icon: BarChart },
+  { label: 'Add Candidate', icon: UserPlus, href: "/candidates" },
+  { label: 'Schedule Interview', icon: CalendarPlus, href: "/interviews" },
+  { label: 'Analyze Skills', icon: BarChart, href: "/skills" },
 ];
 
 const recentActivity = [
@@ -70,7 +70,7 @@ const upcomingInterviews = [
     { date: "21", month: "Jul", name: "Alex Ray", role: "Final Interview", time: "1:52 PM", interviewer: "Alice Williams, Hiring Manager" },
 ];
 
-const EventIndicator = () => <div className="absolute bottom-1 left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-primary" />;
+const EventIndicator = () => <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-primary" />;
 
 export default function Dashboard() {
   const [date, setDate] = React.useState<Date | undefined>(new Date('2025-07-13'));
@@ -79,7 +79,6 @@ export default function Dashboard() {
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Dashboard</h1>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -89,40 +88,44 @@ export default function Dashboard() {
               <Briefcase className="h-5 w-5 text-purple-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">2</div>
+              <div className="text-2xl font-bold">12</div>
+              <p className="text-xs text-muted-foreground">+5 since last month</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total Panelists
+                Candidates
               </CardTitle>
               <Users className="h-5 w-5 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">4</div>
+              <div className="text-2xl font-bold">87</div>
+              <p className="text-xs text-muted-foreground">+10 since last month</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Candidate Satisfaction
+                Satisfaction
               </CardTitle>
               <Smile className="h-5 w-5 text-blue-500" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">92%</div>
+               <p className="text-xs text-muted-foreground">Candidates feel satisfied</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Upcoming Interviews
+                Interviews
               </CardTitle>
               <CalendarDays className="h-5 w-5 text-red-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">6</div>
+              <div className="text-2xl font-bold">23</div>
+               <p className="text-xs text-muted-foreground">+6 scheduled this week</p>
             </CardContent>
           </Card>
         </div>
@@ -154,7 +157,7 @@ export default function Dashboard() {
                     placeholder="e.g., 'Find me a senior react developer...'"
                     className="pr-12 h-12"
                   />
-                  <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 bg-gray-700 hover:bg-gray-800 text-white dark:bg-gray-800 dark:hover:bg-gray-700">
+                  <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 bg-primary text-primary-foreground hover:bg-primary/90">
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
@@ -211,7 +214,7 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-0">
                     <Calendar
                         mode="single"
                         selected={date}
@@ -219,18 +222,24 @@ export default function Dashboard() {
                         className="p-0"
                         month={new Date('2025-07-01')}
                         classNames={{
-                          head_cell: 'w-full font-normal text-sm',
-                          cell: 'w-full text-center text-sm p-0 relative',
+                          root: 'p-3',
+                          months: 'space-y-4',
+                          month: 'space-y-4',
+                          caption_label: 'text-base font-medium',
+                          head_row: 'flex justify-between w-full mb-2',
+                          head_cell: 'text-muted-foreground rounded-md w-10 font-normal text-sm',
+                          row: 'flex w-full mt-2 justify-between',
+                          cell: 'h-10 w-10 text-center text-sm p-0 relative',
                           day: 'w-full h-10',
-                          day_selected: 'bg-primary text-primary-foreground hover:bg-primary/90 rounded-md',
-                          day_today: 'bg-accent text-accent-foreground rounded-md',
+                          day_selected: 'bg-primary text-primary-foreground hover:bg-primary/90 rounded-full',
+                          day_today: 'bg-accent text-accent-foreground rounded-full',
                           day_outside: 'text-muted-foreground opacity-50',
                         }}
                         components={{
-                            DayContent: ({ date: d, ...props }) => {
+                            DayContent: ({ date: d }) => {
                                 const isInterviewDay = interviewDates.includes(d.getDate()) && d.getMonth() === 6 && d.getFullYear() === 2025;
                                 return (
-                                    <div className="relative flex justify-center items-center h-10 w-full">
+                                    <div className="relative flex justify-center items-center h-10 w-10">
                                         <span>{d.getDate()}</span>
                                         {isInterviewDay && <EventIndicator />}
                                     </div>
@@ -243,11 +252,12 @@ export default function Dashboard() {
              <Card>
                 <CardHeader>
                     <CardTitle>Upcoming Interviews</CardTitle>
+                    <CardDescription>Based on your calendar</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {upcomingInterviews.map((interview) => (
                     <div key={interview.name} className="flex items-center gap-4">
-                        <div className="flex flex-col items-center justify-center p-2 rounded-md bg-muted">
+                        <div className="flex flex-col items-center justify-center p-2 rounded-md bg-muted aspect-square h-14">
                             <span className="text-xs font-semibold text-muted-foreground">{interview.month}</span>
                             <span className="text-lg font-bold">{interview.date}</span>
                         </div>
