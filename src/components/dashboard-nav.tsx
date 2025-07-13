@@ -12,7 +12,7 @@ const navItems = [
   { href: '/candidates', label: 'Candidates', icon: Users },
   { href: '/interviews', label: 'Interviews', icon: CalendarDays },
   { href: '/panelists', label: 'Panelists', icon: User },
-  { href: '/skills', label: 'AI Skills', icon: Puzzle },
+  { href: '/integrations', label: 'Integrations', icon: Puzzle },
 ];
 
 const secondaryNavItems = [
