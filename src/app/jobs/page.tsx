@@ -31,6 +31,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
+  DialogClose,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -110,11 +111,18 @@ const statusColor: { [key: string]: string } = {
 };
 
 function CreateJobDialog() {
+    const [dialogOpen, setDialogOpen] = React.useState(false);
     const [selectedPanelists, setSelectedPanelists] = React.useState<User[]>([]);
-    const [open, setOpen] = React.useState(false);
+    const [popoverOpen, setPopoverOpen] = React.useState(false);
+
+    const handleCreateJob = () => {
+        // In a real app, you'd handle form submission here.
+        console.log("Creating job...");
+        setDialogOpen(false); // Close the dialog on creation
+    }
 
     return (
-     <Dialog>
+     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogTrigger asChild>
             <Button>
                 <PlusCircle className="mr-2 h-4 w-4" />
@@ -144,12 +152,12 @@ function CreateJobDialog() {
                     </div>
                      <div className="space-y-2">
                         <Label>Assign Panelists</Label>
-                        <Popover open={open} onOpenChange={setOpen}>
+                        <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
                             <PopoverTrigger asChild>
                                 <Button
                                 variant="outline"
                                 role="combobox"
-                                aria-expanded={open}
+                                aria-expanded={popoverOpen}
                                 className="w-full justify-between"
                                 >
                                 {selectedPanelists.length > 0
@@ -173,7 +181,7 @@ function CreateJobDialog() {
                                                             ? current.filter(p => p.email !== panelist.email)
                                                             : [...current, panelist]
                                                     );
-                                                    setOpen(true);
+                                                    setPopoverOpen(true);
                                                 }}
                                             >
                                                 <Check
@@ -194,8 +202,10 @@ function CreateJobDialog() {
                 </div>
             </div>
             <DialogFooter>
-                <Button variant="outline">Cancel</Button>
-                <Button type="submit">Create Job</Button>
+                <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button type="button" onClick={handleCreateJob}>Create Job</Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
