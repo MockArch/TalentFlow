@@ -20,6 +20,7 @@ import {
   Clock,
   ChevronLeft,
   ChevronRight,
+  Loader2,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -37,6 +38,7 @@ import { UserNav } from '@/components/user-nav';
 import { interviews as allInterviews } from '@/lib/data';
 import type { Interview } from '@/lib/types';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const quickActions = [
   { label: 'Add Candidate', icon: UserPlus, href: "/candidates" },
@@ -87,10 +89,61 @@ const EventIndicator = ({ count }: { count: number }) => (
     </div>
 );
 
+type ChatMessage = {
+    role: 'user' | 'assistant';
+    content: string;
+};
+
 
 export default function Dashboard() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
+
+  const [chatMessages, setChatMessages] = React.useState<ChatMessage[]>([
+    {
+      role: 'assistant',
+      content:
+        "Hello! How can I help you today? You can ask me to find candidates, summarize resumes, or schedule interviews.",
+    },
+  ]);
+  const [chatInput, setChatInput] = React.useState('');
+  const [isAiResponding, setIsAiResponding] = React.useState(false);
+  const scrollAreaRef = React.useRef<HTMLDivElement>(null);
+
+  const handleChatSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim() || isAiResponding) return;
+
+    const newMessages: ChatMessage[] = [
+      ...chatMessages,
+      { role: 'user', content: chatInput },
+    ];
+    setChatMessages(newMessages);
+    setChatInput('');
+    setIsAiResponding(true);
+
+    setTimeout(() => {
+      setChatMessages([
+        ...newMessages,
+        {
+          role: 'assistant',
+          content:
+            "This is a dummy response. The AI functionality is not yet implemented.",
+        },
+      ]);
+      setIsAiResponding(false);
+    }, 1500);
+  };
+  
+  React.useEffect(() => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTo({
+        top: scrollAreaRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [chatMessages]);
+
 
   const interviewCountsByDay = React.useMemo(() => {
     const counts: { [day: string]: number } = {};
@@ -130,9 +183,6 @@ export default function Dashboard() {
           <p className="text-muted-foreground">
             Welcome back! Here&apos;s a quick overview of your hiring pipeline.
           </p>
-        </div>
-        <div className="flex items-center gap-4">
-            <UserNav />
         </div>
       </div>
       <div className="flex flex-col gap-6">
@@ -200,24 +250,52 @@ export default function Dashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-grow flex flex-col justify-between gap-4">
-                 <div className="flex items-start gap-3 rounded-lg bg-muted p-3">
-                    <Avatar className="h-8 w-8 border">
-                        <AvatarImage src="https://placehold.co/40x40.png" alt="AI Avatar" data-ai-hint="bot" />
-                        <AvatarFallback>AI</AvatarFallback>
-                    </Avatar>
-                    <p className="text-sm pt-1">
-                        Hello! How can I help you today? You can ask me to find candidates, summarize resumes, or schedule interviews.
-                    </p>
-                </div>
-                <div className="relative">
+                 <ScrollArea className="flex-grow h-64 pr-4" ref={scrollAreaRef}>
+                   <div className="space-y-4">
+                      {chatMessages.map((message, index) => (
+                        <div key={index} className={`flex items-start gap-3 ${message.role === 'user' ? 'justify-end' : ''}`}>
+                          {message.role === 'assistant' && (
+                            <Avatar className="h-8 w-8 border">
+                                <AvatarImage src="https://placehold.co/40x40.png" alt="AI Avatar" data-ai-hint="bot" />
+                                <AvatarFallback>AI</AvatarFallback>
+                            </Avatar>
+                          )}
+                           <div className={`rounded-lg p-3 text-sm ${message.role === 'assistant' ? 'bg-muted' : 'bg-primary text-primary-foreground'}`}>
+                                <p>{message.content}</p>
+                           </div>
+                           {message.role === 'user' && (
+                            <Avatar className="h-8 w-8 border">
+                                <AvatarImage src="https://placehold.co/40x40.png" alt="User Avatar" data-ai-hint="person avatar" />
+                                <AvatarFallback>You</AvatarFallback>
+                            </Avatar>
+                          )}
+                        </div>
+                      ))}
+                      {isAiResponding && (
+                         <div className="flex items-start gap-3">
+                            <Avatar className="h-8 w-8 border">
+                                <AvatarImage src="https://placehold.co/40x40.png" alt="AI Avatar" data-ai-hint="bot" />
+                                <AvatarFallback>AI</AvatarFallback>
+                            </Avatar>
+                            <div className="rounded-lg p-3 bg-muted flex items-center justify-center">
+                                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                            </div>
+                        </div>
+                      )}
+                    </div>
+                </ScrollArea>
+                <form onSubmit={handleChatSubmit} className="relative">
                   <Input
                     placeholder="e.g., 'Find me a senior react developer...'"
                     className="pr-12 h-12"
+                    value={chatInput}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    disabled={isAiResponding}
                   />
-                  <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 bg-primary text-primary-foreground hover:bg-primary/90">
+                  <Button type="submit" variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 bg-primary text-primary-foreground hover:bg-primary/90" disabled={isAiResponding || !chatInput.trim()}>
                     <Send className="h-4 w-4" />
                   </Button>
-                </div>
+                </form>
               </CardContent>
             </Card>
           </div>
