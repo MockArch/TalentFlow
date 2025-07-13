@@ -58,11 +58,7 @@ const jobDetailsData = {
   },
 };
 
-const matchedCandidates = [
-  // Using a subset of allCandidates for matched candidates
-  allCandidates[0], allCandidates[6], allCandidates[2], allCandidates[4]
-].map(c => ({...c, matchScore: Math.floor(Math.random() * 11) + 88, topSkills: c.qualifications.split(', ').slice(0,3)}));
-
+type MatchedCandidate = Candidate & { matchScore: number; topSkills: string[] };
 
 const stageColor: { [key: string]: string } = {
   Interviewing: 'bg-purple-100 text-purple-800',
@@ -86,7 +82,7 @@ const StatCard = ({ icon: Icon, label, value }: { icon: React.ElementType, label
   </Card>
 );
 
-const CandidateCard = ({ candidate, onViewDetails }: { candidate: (typeof matchedCandidates)[0], onViewDetails: (c: Candidate) => void }) => (
+const CandidateCard = ({ candidate, onViewDetails }: { candidate: MatchedCandidate, onViewDetails: (c: Candidate) => void }) => (
   <Card className="flex flex-col">
     <CardContent className="p-6 flex flex-col flex-grow">
       <div className="flex items-start justify-between mb-4">
@@ -290,6 +286,17 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
   const [selectedRows, setSelectedRows] = React.useState<string[]>([]);
   const [selectedCandidate, setSelectedCandidate] = React.useState<Candidate | null>(null);
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
+  const [matchedCandidates, setMatchedCandidates] = React.useState<MatchedCandidate[]>([]);
+  
+  React.useEffect(() => {
+    const candidatesToProcess = [allCandidates[0], allCandidates[6], allCandidates[2], allCandidates[4]];
+    const processedCandidates = candidatesToProcess.map(c => ({
+        ...c, 
+        matchScore: Math.floor(Math.random() * 11) + 88, 
+        topSkills: c.qualifications.split(', ').slice(0,3)
+    }));
+    setMatchedCandidates(processedCandidates);
+  }, []);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -324,7 +331,16 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
             <div className='space-y-2'>
                 <h1 className="text-3xl font-bold flex items-center gap-3">
                     {jobDetails.title}
-                    <Badge className="bg-green-100 text-green-800 border-green-200 text-sm font-medium">{jobDetails.status}</Badge>
+                     <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                         <Badge className="text-sm font-medium cursor-pointer" variant={jobDetails.status === 'Open' ? 'default' : jobDetails.status === 'On Hold' ? 'secondary' : 'destructive'}>{jobDetails.status}</Badge>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start">
+                        <DropdownMenuItem onClick={() => setJobDetails(prev => ({...prev, status: 'Open'}))}>Open</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setJobDetails(prev => ({...prev, status: 'On Hold'}))}>On Hold</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setJobDetails(prev => ({...prev, status: 'Closed'}))}>Closed</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                 </h1>
                 <p className="text-muted-foreground flex items-center gap-2">
                     <CalendarDays className="h-4 w-4" />
