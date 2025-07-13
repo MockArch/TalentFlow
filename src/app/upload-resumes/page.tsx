@@ -53,6 +53,17 @@ export default function UploadResumesPage() {
     event.preventDefault();
     event.stopPropagation();
   };
+  
+  const handleUploadClick = () => {
+    if (files.length > 0) {
+      // In a real app, you would handle the file upload here.
+      // For now, we can just log the files and clear them.
+      console.log('Uploading files:', files);
+      setFiles([]);
+    } else if (fileInputRef.current) {
+       fileInputRef.current.click();
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -106,7 +117,7 @@ export default function UploadResumesPage() {
                     </ul>
                   </div>
                 )}
-                <Button size="lg" className="w-full">Upload Files</Button>
+                <Button size="lg" className="w-full" onClick={handleUploadClick}>Upload Files</Button>
               </CardContent>
             </Card>
           </div>
