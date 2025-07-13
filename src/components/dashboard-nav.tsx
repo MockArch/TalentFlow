@@ -8,11 +8,9 @@ import { LayoutDashboard, Users, Settings, LogOut, Briefcase, Upload, BarChart, 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/jobs', label: 'Jobs', icon: Briefcase },
-  { href: '/panelists', label: 'Panelists', icon: Users },
-  { href: '/upload-resume', label: 'Upload Resume', icon: Upload },
-  { href: '/analytics', label: 'Analytics', icon: BarChart },
-  { href: '/integrations', label: 'Integrations', icon: Puzzle },
-  { href: '/help', 'label': 'Help', icon: HelpCircle },
+  { href: '/candidates', label: 'Candidates', icon: Users },
+  { href: '/interviews', label: 'Interviews', icon: BarChart },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function DashboardNav() {
@@ -22,8 +20,8 @@ export function DashboardNav() {
   return (
     <div className="flex h-full flex-col">
        <div className="flex h-16 items-center border-b px-4 lg:px-6 bg-sidebar">
-        <Link href="/" className="flex items-center gap-3 font-semibold text-lg text-primary-foreground">
-           <div className="h-8 w-8 flex items-center justify-center rounded-full bg-white text-primary font-bold text-lg">
+        <Link href="/" className="flex items-center gap-3 font-semibold text-lg text-sidebar-foreground">
+           <div className="h-8 w-8 flex items-center justify-center rounded-md bg-primary text-primary-foreground font-bold text-lg">
             T
           </div>
           <span className={state === 'collapsed' ? 'hidden' : 'block'}>TalentFlow</span>
