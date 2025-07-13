@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function PanelistsPage() {
   return (
@@ -48,25 +49,37 @@ export default function PanelistsPage() {
                 Add Panelist
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>Add New Panelist</DialogTitle>
                 <DialogDescription>
-                  Enter the details of the new panelist.
+                  Enter the details of the new panelist to add them to the system.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Name
-                  </Label>
-                  <Input id="name" placeholder="John Doe" className="col-span-3" />
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input id="name" placeholder="e.g. Jane Doe" />
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="email" className="text-right">
-                    Email
-                  </Label>
-                  <Input id="email" type="email" placeholder="john@example.com" className="col-span-3" />
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address</Label>
+                  <Input id="email" type="email" placeholder="jane.d@example.com" />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input id="phone" type="tel" placeholder="+1 (555) 123-4567" />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="role">Role / Department</Label>
+                  <Input id="role" placeholder="e.g. Senior Engineer, Design" />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="expertise">Expertise</Label>
+                  <Input id="expertise" placeholder="e.g. React, System Design, UX" />
+                </div>
+                <div className="space-y-2">
+                   <Label htmlFor="availability">Availability</Label>
+                   <Textarea id="availability" placeholder="e.g. Tuesdays & Thursdays after 2pm" />
                 </div>
               </div>
               <Button type="submit" className="w-full">Save Panelist</Button>
