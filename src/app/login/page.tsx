@@ -9,62 +9,73 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { BrainCircuit } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-background px-4">
-      <div className="absolute bottom-1 left-1 rounded-full bg-primary text-primary-foreground h-8 w-8 flex items-center justify-center text-sm font-bold">
-        N
+    <div className="flex min-h-screen w-full">
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-gray-100 dark:bg-gray-800 p-12">
+        <div className="w-full max-w-md">
+            <div className="text-left space-y-4">
+                 <div className="h-12 w-12 flex items-center justify-center rounded-full bg-gray-800 text-white font-bold text-2xl">
+                    N
+                </div>
+                <h1 className="text-4xl font-bold text-gray-800 dark:text-white">Welcome to HarborView</h1>
+                <p className="text-gray-600 dark:text-gray-300">
+                    The intelligent recruitment partner that helps you find, interview, and hire the best talent.
+                </p>
+            </div>
+        </div>
       </div>
-      <Card className="w-full max-w-sm shadow-lg">
-        <CardHeader className="text-center">
-          <div className="mb-4 flex justify-center">
-            <div className="rounded-lg bg-primary/10 p-3 bg-primary text-primary-foreground">
-                <BrainCircuit className="h-8 w-8" />
-            </div>
-          </div>
-          <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-          <CardDescription>
-            Enter your credentials to access your dashboard.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-                className="bg-muted"
-              />
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-white dark:bg-gray-900 p-6">
+        <Card className="w-full max-w-sm shadow-none border-none">
+          <CardHeader>
+            <CardTitle className="text-3xl font-bold">Sign In</CardTitle>
+            <CardDescription>
+              Enter your credentials to access your dashboard.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  required
+                  className="bg-gray-50 h-12"
+                />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" required placeholder="Enter your password" className="bg-gray-50 h-12" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                    <Checkbox id="remember-me" />
+                    <Label htmlFor="remember-me" className="font-normal text-sm">Remember me</Label>
+                </div>
                 <Link
                   href="#"
-                  className="text-sm text-primary/80 hover:underline"
+                  className="text-sm text-primary hover:underline"
                 >
-                  Forgot your password?
+                  Forgot Password?
                 </Link>
               </div>
-              <Input id="password" type="password" required className="bg-muted" />
+              <Button asChild type="submit" className="w-full h-12 text-base">
+                <Link href="/">Sign In</Link>
+              </Button>
+            </form>
+            <div className="mt-6 text-center text-sm text-muted-foreground">
+              Don&apos;t have an account?{' '}
+              <Link href="#" className="font-semibold text-primary hover:underline">
+                Sign Up
+              </Link>
             </div>
-            <Button asChild type="submit" className="w-full">
-              <Link href="/">Login</Link>
-            </Button>
-          </form>
-          <div className="mt-4 text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{' '}
-            <Link href="#" className="font-semibold text-primary/80 hover:underline">
-              Sign up
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -5,33 +5,22 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { UserNav } from './user-nav';
 
 const getPageTitle = (pathname: string) => {
-  switch (pathname) {
-    case '/':
-      return 'Dashboard';
-    case '/candidates':
-      return 'Candidates';
-    case '/interviews':
-      return 'Interviews';
-    case '/skills':
-      return 'Skill Identifier';
-    default:
-      if (pathname.startsWith('/candidates/')) return 'Candidate Profile';
-      return 'TalentFlow';
-  }
+  // This function is removed as the title "Dashboard" is now hardcoded in the page
+  // and other page titles are not part of the current design.
+  return '';
 };
 
 export function Header() {
   const pathname = usePathname();
-  const title = getPageTitle(pathname);
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-card/80 px-4 backdrop-blur-sm lg:h-[60px] lg:px-6">
+    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-card/80 px-4 backdrop-blur-sm lg:px-6">
       <div className="md:hidden">
         <SidebarTrigger />
       </div>
-      <h1 className="text-lg font-semibold md:text-xl font-headline">{title}</h1>
+      {/* The h1 title is now rendered on the page itself */}
       <div className="ml-auto flex items-center gap-4">
-        <UserNav />
+        {/* UserNav could be here if needed in the future, but it's not in the provided design */}
       </div>
     </header>
   );
