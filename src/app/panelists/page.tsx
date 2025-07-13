@@ -1,6 +1,9 @@
 
+'use client';
+
+import * as React from 'react';
 import { DashboardLayout } from '@/components/dashboard-layout';
-import { users as panelists } from '@/lib/data';
+import { users as initialPanelists, User } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +28,19 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
 export default function PanelistsPage() {
+  const [panelists, setPanelists] = React.useState<User[]>(initialPanelists);
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+
+  const handleToggleStatus = (email: string) => {
+    setPanelists(currentPanelists =>
+      currentPanelists.map(p =>
+        p.email === email
+          ? { ...p, status: p.status === 'Active' ? 'Inactive' : 'Active' }
+          : p
+      )
+    );
+  };
+
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-6">
@@ -35,7 +51,7 @@ export default function PanelistsPage() {
               Manage your interview panelists.
             </p>
           </div>
-          <Dialog>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button>
                 <PlusCircle className="mr-2 h-4 w-4" />
@@ -88,7 +104,7 @@ export default function PanelistsPage() {
                     <div className="flex items-center gap-4">
                         <Avatar className="h-12 w-12">
                           <AvatarImage src={panelist.avatar} alt={panelist.name} data-ai-hint="person" />
-                          <AvatarFallback>{panelist.name.charAt(0)}</AvatarFallback>
+                          <AvatarFallback>{panelist.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                         </Avatar>
                         <div>
                             <CardTitle className="text-lg">{panelist.name}</CardTitle>
@@ -103,8 +119,10 @@ export default function PanelistsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Deactivate</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleToggleStatus(panelist.email)}>
+                          {panelist.status === 'Active' ? 'Deactivate' : 'Activate'}
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                 </div>

@@ -1,18 +1,18 @@
+
 "use client";
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSidebar, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { LayoutDashboard, Users, Settings, LogOut, Briefcase, Upload, BarChart, HelpCircle, Puzzle, User } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, LogOut, Briefcase, Upload, BarChart, HelpCircle, Puzzle, User, CalendarDays } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/jobs', label: 'Jobs', icon: Briefcase },
   { href: '/candidates', label: 'Candidates', icon: Users },
+  { href: '/interviews', label: 'Interviews', icon: CalendarDays },
   { href: '/panelists', label: 'Panelists', icon: User },
-  { href: '/upload-resumes', label: 'Upload Resumes', icon: Upload },
-  { href: '/analytics', label: 'Analytics', icon: BarChart },
-  { href: '/integrations', label: 'Integrations', icon: Puzzle },
+  { href: '/skills', label: 'AI Skills', icon: Puzzle },
 ];
 
 const secondaryNavItems = [
@@ -23,6 +23,11 @@ const secondaryNavItems = [
 export function DashboardNav() {
   const pathname = usePathname();
   const { state } = useSidebar();
+
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === href;
+    return pathname.startsWith(href);
+  };
 
   return (
     <div className="flex h-full flex-col">
@@ -40,7 +45,7 @@ export function DashboardNav() {
             <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname === item.href}
+                  isActive={isActive(item.href)}
                   className="h-10 justify-start text-sm font-normal text-sidebar-foreground/80 data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[active=true]:font-medium"
                   tooltip={{children: item.label, side:"right", align:"center"}}
                 >
@@ -59,7 +64,7 @@ export function DashboardNav() {
                  <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname === item.href}
+                      isActive={isActive(item.href)}
                       className="h-10 justify-start text-sm font-normal text-sidebar-foreground/80 data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[active=true]:font-medium"
                       tooltip={{children: item.label, side:"right", align:"center"}}
                     >
