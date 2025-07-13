@@ -10,7 +10,6 @@ const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/jobs', label: 'Jobs', icon: Briefcase },
   { href: '/candidates', label: 'Candidates', icon: Users },
-  { href: '/interviews', label: 'Interviews', icon: CalendarDays },
   { href: '/panelists', label: 'Panelists', icon: User },
   { href: '/integrations', label: 'Integrations', icon: Puzzle },
 ];
