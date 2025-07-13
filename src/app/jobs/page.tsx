@@ -43,6 +43,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 
 const initialJobOpenings = [
   {
+    id: 'job-1',
     title: 'Senior Frontend Developer',
     status: 'Open',
     description: 'We are looking for an experienced Frontend Developer to join our team. You will be responsible for building the...',
@@ -52,6 +53,7 @@ const initialJobOpenings = [
     hired: 1,
   },
   {
+    id: 'job-2',
     title: 'Full Stack Developer',
     status: 'Open',
     description: 'Seeking a versatile Full Stack Developer to design, develop, and maintain both front-end and back-end...',
@@ -61,6 +63,7 @@ const initialJobOpenings = [
     hired: 1,
   },
   {
+    id: 'job-3',
     title: 'DevOps Engineer',
     status: 'Closed',
     description: 'Join our infrastructure team as a DevOps Engineer. You will be responsible for deploying, automating...',
@@ -70,6 +73,7 @@ const initialJobOpenings = [
     hired: 1,
   },
   {
+    id: 'job-4',
     title: 'Product Manager',
     status: 'On Hold',
     description: 'Lead the product vision, strategy, and roadmap. Work closely with engineering, design, and marketing teams.',
@@ -79,6 +83,7 @@ const initialJobOpenings = [
     hired: 0,
   },
    {
+    id: 'job-5',
     title: 'UX/UI Designer',
     status: 'Open',
     description: 'Create intuitive and visually appealing user interfaces for our web and mobile applications.',
@@ -88,6 +93,7 @@ const initialJobOpenings = [
     hired: 0,
   },
   {
+    id: 'job-6',
     title: 'Backend Engineer',
     status: 'Closed',
     description: 'Develop and maintain server-side logic, databases, and APIs for our applications.',
@@ -125,6 +131,7 @@ function CreateJobDialog({ onAddJob }: { onAddJob: (newJob: JobOpening) => void 
         if (!title || !description) return;
 
         const newJob: JobOpening = {
+            id: `job-${Date.now()}`,
             title,
             description,
             openings,
@@ -263,29 +270,29 @@ export default function JobsPage() {
           </TabsList>
           <TabsContent value="all" className="mt-6">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {jobOpenings.map((job, index) => (
-                <JobCard key={index} {...job} />
+              {jobOpenings.map((job) => (
+                <JobCard key={job.id} {...job} />
               ))}
             </div>
           </TabsContent>
           <TabsContent value="open" className="mt-6">
              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {jobOpenings.filter(j => j.status === 'Open').map((job, index) => (
-                <JobCard key={index} {...job} />
+              {jobOpenings.filter(j => j.status === 'Open').map((job) => (
+                <JobCard key={job.id} {...job} />
               ))}
             </div>
           </TabsContent>
           <TabsContent value="on-hold" className="mt-6">
              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {jobOpenings.filter(j => j.status === 'On Hold').map((job, index) => (
-                <JobCard key={index} {...job} />
+              {jobOpenings.filter(j => j.status === 'On Hold').map((job) => (
+                <JobCard key={job.id} {...job} />
               ))}
             </div>
           </TabsContent>
           <TabsContent value="closed" className="mt-6">
              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {jobOpenings.filter(j => j.status === 'Closed').map((job, index) => (
-                <JobCard key={index} {...job} />
+              {jobOpenings.filter(j => j.status === 'Closed').map((job) => (
+                <JobCard key={job.id} {...job} />
               ))}
             </div>
           </TabsContent>
@@ -296,7 +303,7 @@ export default function JobsPage() {
 }
 
 
-function JobCard({ title, status, description, openings, applicants, inPipeline, hired }: JobOpening) {
+function JobCard({ id, title, status, description, openings, applicants, inPipeline, hired }: JobOpening) {
     return (
         <Card className="flex flex-col">
             <CardHeader>
@@ -331,7 +338,7 @@ function JobCard({ title, status, description, openings, applicants, inPipeline,
             </CardContent>
             <CardFooter>
                  <Button asChild className="w-full bg-gray-800 text-white hover:bg-gray-700">
-                    <Link href="#">
+                    <Link href={`/jobs/${id}`}>
                         View Job
                         <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
@@ -340,5 +347,3 @@ function JobCard({ title, status, description, openings, applicants, inPipeline,
         </Card>
     );
 }
-
-    
