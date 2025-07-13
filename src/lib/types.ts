@@ -10,7 +10,7 @@ export type Candidate = {
   email: string;
   avatar: string;
   role: string;
-  stage: 'Sourced' | 'Applied' | 'Interviewing' | 'Offer' | 'Hired';
+  stage: 'Sourced' | 'Applied' | 'Interviewing' | 'Offer' | 'Hired' | 'Phone Screen';
   appliedDate: string;
   qualifications: string;
 };

@@ -74,7 +74,7 @@ export const candidates: Candidate[] = [
     email: 'isabella.a@example.com',
     avatar: 'https://placehold.co/100x100.png?text=IA',
     role: 'Senior Frontend Developer',
-    stage: 'Applied',
+    stage: 'Phone Screen',
     appliedDate: '2023-10-21',
     qualifications: 'Vue.js, Nuxt.js, TypeScript',
   },

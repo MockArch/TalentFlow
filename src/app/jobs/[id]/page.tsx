@@ -15,14 +15,37 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Users, Briefcase, Star, MessageSquare, UserCheck } from 'lucide-react';
+import { CalendarDays, Users, Briefcase, Star, MessageSquare, UserCheck, Mail, Phone, MapPin, Award, Tag, ThumbsUp, ThumbsDown, X, Building } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
-import { candidates } from '@/lib/data';
+import { candidates as allCandidates } from '@/lib/data';
 import type { Candidate } from '@/lib/types';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent
+} from '@/components/ui/dropdown-menu';
+import { MoreHorizontal } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from '@/components/ui/sheet';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 
-
-const jobDetails = {
+const jobDetailsData = {
   title: 'Senior Frontend Developer',
   status: 'Open',
   postedDate: 'June 29th, 2025',
@@ -36,69 +59,18 @@ const jobDetails = {
 };
 
 const matchedCandidates = [
-  {
-    name: 'Sarah Johnson',
-    role: 'Senior Frontend Developer',
-    avatar: 'https://placehold.co/100x100.png',
-    stage: 'Interview',
-    matchScore: 95,
-    topSkills: ['React', 'TypeScript', 'Node.js', '+4'],
-    id: 'CAN-008'
-  },
-  {
-    name: 'Olivia Miller',
-    role: 'Software Engineer in Test',
-    avatar: 'https://placehold.co/100x100.png',
-    stage: 'Interview',
-    matchScore: 93,
-    topSkills: ['Java', 'Selenium', 'Appium', '+2'],
-    id: 'CAN-009'
-  },
-  {
-    name: 'Emily Rodriguez',
-    role: 'Backend Developer',
-    avatar: 'https://placehold.co/100x100.png',
-    stage: 'Screening',
-    matchScore: 92,
-    topSkills: ['Java', 'Spring Boot', 'Microservices', '+2'],
-    id: 'CAN-010'
-  },
-  {
-    name: 'Amanda Brown',
-    role: 'Data Scientist',
-    avatar: 'https://placehold.co/100x100.png',
-    stage: 'Interview',
-    matchScore: 91,
-    topSkills: ['Python', 'R', 'TensorFlow', '+2'],
-    id: 'CAN-011'
-  },
-  {
-    name: 'David Lee',
-    role: 'DevOps Engineer',
-    avatar: 'https://placehold.co/100x100.png',
-    stage: 'New',
-    matchScore: 90,
-    topSkills: ['AWS', 'Terraform', 'Jenkins', '+3'],
-    id: 'CAN-005'
-  },
-  {
-    name: 'Kevin Taylor',
-    role: 'UX/UI Designer',
-    avatar: 'https://placehold.co/100x100.png',
-    stage: 'New',
-    matchScore: 89,
-    topSkills: ['Figma', 'Adobe XD', 'Sketch', '+2'],
-    id: 'CAN-012'
-  },
-];
+  // Using a subset of allCandidates for matched candidates
+  allCandidates[0], allCandidates[6], allCandidates[2], allCandidates[4]
+].map(c => ({...c, matchScore: Math.floor(Math.random() * 11) + 88, topSkills: c.qualifications.split(', ').slice(0,3)}));
 
 
 const stageColor: { [key: string]: string } = {
-  Interview: 'bg-purple-100 text-purple-800',
-  Screening: 'bg-yellow-100 text-yellow-800',
+  Interviewing: 'bg-purple-100 text-purple-800',
+  'Phone Screen': 'bg-blue-100 text-blue-800',
+  Applied: 'bg-gray-100 text-gray-800',
   New: 'bg-blue-100 text-blue-800',
+  Screening: 'bg-yellow-100 text-yellow-800',
 };
-
 
 const StatCard = ({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: number }) => (
   <Card className="bg-muted/50 border-none shadow-none">
@@ -114,22 +86,22 @@ const StatCard = ({ icon: Icon, label, value }: { icon: React.ElementType, label
   </Card>
 );
 
-const CandidateCard = ({ name, role, avatar, stage, matchScore, topSkills }: (typeof matchedCandidates)[0]) => (
+const CandidateCard = ({ candidate, onViewDetails }: { candidate: (typeof matchedCandidates)[0], onViewDetails: (c: Candidate) => void }) => (
   <Card className="flex flex-col">
     <CardContent className="p-6 flex flex-col flex-grow">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-4">
             <Avatar className="h-16 w-16 border">
-                <AvatarImage src={avatar} alt={name} data-ai-hint="person" />
-                <AvatarFallback>{name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                <AvatarImage src={candidate.avatar} alt={candidate.name} data-ai-hint="person" />
+                <AvatarFallback>{candidate.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
             </Avatar>
             <div>
-                <h3 className="font-bold text-lg">{name}</h3>
-                <p className="text-sm text-muted-foreground">{role}</p>
+                <h3 className="font-bold text-lg">{candidate.name}</h3>
+                <p className="text-sm text-muted-foreground">{candidate.role}</p>
             </div>
         </div>
-        <Badge variant="secondary" className={cn('whitespace-nowrap font-medium', stageColor[stage])}>
-            {stage}
+        <Badge variant="secondary" className={cn('whitespace-nowrap font-medium', stageColor[candidate.stage])}>
+            {candidate.stage}
         </Badge>
       </div>
       
@@ -139,22 +111,23 @@ const CandidateCard = ({ name, role, avatar, stage, matchScore, topSkills }: (ty
                 <Star className="h-4 w-4" />
                 <span>Match Score</span>
             </div>
-            <span className="font-semibold">{matchScore}%</span>
+            <span className="font-semibold">{candidate.matchScore}%</span>
         </div>
-        <Progress value={matchScore} className="h-1.5" />
+        <Progress value={candidate.matchScore} className="h-1.5" />
       </div>
 
        <div className="space-y-2 mb-6">
         <p className="text-sm text-muted-foreground">Top Skills</p>
         <div className="flex flex-wrap gap-2">
-            {topSkills.map((skill, i) => (
+            {candidate.topSkills.map((skill, i) => (
                 <Badge key={i} variant="secondary" className="font-normal">{skill}</Badge>
             ))}
+            {candidate.qualifications.split(',').length > 3 && <Badge variant="secondary" className="font-normal">+{candidate.qualifications.split(',').length - 3}</Badge>}
         </div>
       </div>
       
       <div className="grid grid-cols-2 gap-4">
-        <Button variant="outline">View Details</Button>
+        <Button variant="outline" onClick={() => onViewDetails(candidate)}>View Details</Button>
         <Button>
             <MessageSquare className="mr-2 h-4 w-4" />
             Contact
@@ -164,8 +137,183 @@ const CandidateCard = ({ name, role, avatar, stage, matchScore, topSkills }: (ty
   </Card>
 );
 
+const CandidateDetailsSheet = ({ candidate, open, onOpenChange }: { candidate: Candidate | null, open: boolean, onOpenChange: (open: boolean) => void }) => {
+  if (!candidate) return null;
+  
+  const candidateDetails = {
+    phone: '+1 (555) 123-4567',
+    location: 'San Francisco, CA',
+    experience: '5 years',
+    education: 'BS Computer Science, Stanford University',
+    workExperience: [
+      { role: 'Frontend Developer', company: 'TechSolutions Inc.', icon: Building },
+      { role: 'Junior Frontend Developer', company: 'WebInnovators Co.', icon: Building },
+    ],
+    tags: ['Top-Talent', 'React-Pro'],
+    skills: candidate.qualifications.split(', '),
+    interviews: [{ title: 'Technical', panelists: 'John Smith, Jane Doe', date: 'Jul 15, 2025 - 1:52 PM' }],
+    feedback: [
+      { name: 'Jane Doe', comment: 'Excellent technical skills and great communication. Strong fit for the team.', status: 'Positive', icon: ThumbsUp },
+      { name: 'John Smith', comment: 'Deep understanding of React and our tech stack.', status: 'Positive', icon: ThumbsUp },
+    ],
+  };
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="w-full sm:max-w-2xl p-0 overflow-y-auto">
+        <div className="p-6">
+          <SheetHeader className="flex flex-row items-start justify-between">
+            <div className="flex items-center gap-4">
+              <Avatar className="h-20 w-20 border">
+                <AvatarImage src={candidate.avatar} alt={candidate.name} data-ai-hint="person" />
+                <AvatarFallback>{candidate.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+              </Avatar>
+              <div>
+                <SheetTitle className="text-2xl">{candidate.name}</SheetTitle>
+                <p className="text-muted-foreground">{candidate.role}</p>
+              </div>
+            </div>
+            <SheetClose asChild>
+              <Button variant="ghost" size="icon">
+                <X className="h-5 w-5" />
+              </Button>
+            </SheetClose>
+          </SheetHeader>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm text-muted-foreground mt-6">
+            <div className="flex items-center gap-2"><Mail className="h-4 w-4" /> <span>{candidate.email}</span></div>
+            <div className="flex items-center gap-2"><Phone className="h-4 w-4" /> <span>{candidateDetails.phone}</span></div>
+            <div className="flex items-center gap-2"><MapPin className="h-4 w-4" /> <span>{candidateDetails.location}</span></div>
+            <div className="flex items-center gap-2"><Briefcase className="h-4 w-4" /> <span>{candidateDetails.experience}</span></div>
+            <div className="flex items-center gap-2 col-span-2"><Award className="h-4 w-4" /> <span>{candidateDetails.education}</span></div>
+          </div>
+        </div>
+        
+        <Separator />
+        
+        <div className="p-6 space-y-6">
+          <div>
+            <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2"><Briefcase className="h-5 w-5" /> Work Experience</h3>
+            <Accordion type="single" collapsible className="w-full">
+              {candidateDetails.workExperience.map((exp, index) => (
+                <AccordionItem key={index} value={`item-${index}`}>
+                  <AccordionTrigger>
+                    <div className="flex items-center gap-3">
+                      <exp.icon className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <p className="font-semibold text-sm">{exp.role}</p>
+                        <p className="text-xs text-muted-foreground text-left">{exp.company}</p>
+                      </div>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    More details about this role can be added here.
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2"><Tag className="h-5 w-5" /> Tags</h3>
+            <div className="flex flex-wrap items-center gap-2">
+              {candidateDetails.tags.map(tag => (
+                <Badge key={tag} variant="secondary" className="text-sm py-1">
+                  {tag}
+                  <button className="ml-1.5 focus:outline-none"><X className="h-3 w-3"/></button>
+                </Badge>
+              ))}
+              <div className="flex gap-2 flex-grow">
+                 <Input placeholder="Add a tag..." className="h-8 flex-grow" />
+                 <Button size="sm">Add</Button>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Skills</h3>
+            <div className="flex flex-wrap gap-2">
+              {candidateDetails.skills.map(skill => (
+                <Badge key={skill} variant="outline" className="font-normal">{skill}</Badge>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2"><CalendarDays className="h-5 w-5" /> Scheduled Interviews</h3>
+            {candidateDetails.interviews.map((interview, index) => (
+               <div key={index} className="p-3 rounded-md bg-muted flex items-center justify-between">
+                 <div>
+                    <p className="font-medium text-sm">{interview.title}</p>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1"><Users className="h-3 w-3" /> {interview.panelists}</p>
+                 </div>
+                 <p className="text-sm font-medium">{interview.date}</p>
+              </div>
+            ))}
+          </div>
+          
+          <div>
+             <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-foreground flex items-center gap-2"><MessageSquare className="h-5 w-5" /> Hiring Manager Feedback</h3>
+                <Button variant="outline" size="sm">Add Feedback</Button>
+             </div>
+             <div className="space-y-4">
+                {candidateDetails.feedback.map((fb, index) => (
+                  <div key={index} className="flex gap-3">
+                    <Avatar className="h-9 w-9">
+                        <AvatarImage src={`https://placehold.co/40x40.png?text=${fb.name.split(' ').map(n=>n[0]).join('')}`} alt={fb.name} data-ai-hint="person" />
+                        <AvatarFallback>{fb.name.split(' ').map(n=>n[0]).join('')}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-grow">
+                       <div className="flex items-center justify-between">
+                         <p className="font-semibold text-sm">{fb.name}</p>
+                         <Badge variant={fb.status === 'Positive' ? 'secondary' : 'destructive'} className={cn(fb.status === 'Positive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800', "font-medium")}>
+                          <fb.icon className="h-3 w-3 mr-1" />
+                          {fb.status}
+                        </Badge>
+                       </div>
+                       <p className="text-sm text-muted-foreground mt-1">{fb.comment}</p>
+                    </div>
+                  </div>
+                ))}
+             </div>
+          </div>
+
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+};
+
 
 export default function JobDetailsPage({ params }: { params: { id: string } }) {
+  const [jobDetails, setJobDetails] = React.useState(jobDetailsData);
+  const [selectedRows, setSelectedRows] = React.useState<string[]>([]);
+  const [selectedCandidate, setSelectedCandidate] = React.useState<Candidate | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedRows(allCandidates.map(c => c.id));
+    } else {
+      setSelectedRows([]);
+    }
+  };
+
+  const handleRowSelect = (rowId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedRows(prev => [...prev, rowId]);
+    } else {
+      setSelectedRows(prev => prev.filter(id => id !== rowId));
+    }
+  };
+
+  const handleViewDetails = (candidate: Candidate) => {
+    setSelectedCandidate(candidate);
+    setIsSheetOpen(true);
+  };
+
+  const isAllSelected = selectedRows.length > 0 && selectedRows.length === allCandidates.length;
+  const isIndeterminate = selectedRows.length > 0 && !isAllSelected;
 
   return (
     <DashboardLayout>
@@ -176,7 +324,7 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
             <div className='space-y-2'>
                 <h1 className="text-3xl font-bold flex items-center gap-3">
                     {jobDetails.title}
-                    <Badge className="bg-green-100 text-green-800 border-green-200 text-sm font-medium">Open</Badge>
+                    <Badge className="bg-green-100 text-green-800 border-green-200 text-sm font-medium">{jobDetails.status}</Badge>
                 </h1>
                 <p className="text-muted-foreground flex items-center gap-2">
                     <CalendarDays className="h-4 w-4" />
@@ -206,22 +354,123 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
             <Tabs defaultValue="overview">
                 <TabsList>
                     <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="all-candidates">All Candidates ({candidates.length})</TabsTrigger>
+                    <TabsTrigger value="all-candidates">All Candidates ({allCandidates.length})</TabsTrigger>
                 </TabsList>
                 <TabsContent value="overview" className="mt-6">
                     <h2 className="text-2xl font-semibold mb-4">Matched Candidates</h2>
                     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                         {matchedCandidates.map((candidate) => (
-                           <CandidateCard key={candidate.id} {...candidate} />
+                           <CandidateCard key={candidate.id} candidate={candidate} onViewDetails={handleViewDetails} />
                         ))}
                     </div>
                 </TabsContent>
                 <TabsContent value="all-candidates" className="mt-6">
-                   <p>All candidates table will go here.</p>
+                   <Card>
+                    <CardContent className="p-0">
+                      <div className="p-4 border-b">
+                        {selectedRows.length > 0 ? (
+                          <div className="flex items-center gap-4">
+                            <span className="text-sm text-muted-foreground">{selectedRows.length} selected</span>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm">Change Stage <MoreHorizontal className="ml-2 h-4 w-4" /></Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                <DropdownMenuItem>Applied</DropdownMenuItem>
+                                <DropdownMenuItem>Screening</DropdownMenuItem>
+                                <DropdownMenuItem>Interviewing</DropdownMenuItem>
+                                <DropdownMenuItem>Offer</DropdownMenuItem>
+                                <DropdownMenuItem>Hired</DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                            <Button variant="outline" size="sm">Send Message</Button>
+                            <Button variant="destructive" size="sm">Reject</Button>
+                          </div>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">Select candidates to perform bulk actions.</p>
+                        )}
+                      </div>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead padding="checkbox">
+                              <Checkbox
+                                checked={isAllSelected}
+                                onCheckedChange={(checked) => handleSelectAll(!!checked)}
+                                aria-label="Select all"
+                                // @ts-ignore
+                                indeterminate={isIndeterminate.toString()}
+                              />
+                            </TableHead>
+                            <TableHead>Candidate</TableHead>
+                            <TableHead>Stage</TableHead>
+                            <TableHead>Applied Date</TableHead>
+                            <TableHead><span className="sr-only">Actions</span></TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {allCandidates.map((candidate) => (
+                            <TableRow key={candidate.id} data-state={selectedRows.includes(candidate.id) && "selected"}>
+                              <TableCell padding="checkbox">
+                                <Checkbox
+                                  checked={selectedRows.includes(candidate.id)}
+                                  onCheckedChange={(checked) => handleRowSelect(candidate.id, !!checked)}
+                                  aria-label="Select row"
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-3">
+                                  <Avatar>
+                                    <AvatarImage src={candidate.avatar} alt={candidate.name} data-ai-hint="person" />
+                                    <AvatarFallback>{candidate.name.charAt(0)}</AvatarFallback>
+                                  </Avatar>
+                                  <div>
+                                    <div className="font-medium">{candidate.name}</div>
+                                    <div className="text-sm text-muted-foreground">{candidate.email}</div>
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="secondary" className={cn(stageColor[candidate.stage])}>{candidate.stage}</Badge>
+                              </TableCell>
+                              <TableCell>{candidate.appliedDate}</TableCell>
+                              <TableCell>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button aria-haspopup="true" size="icon" variant="ghost">
+                                      <MoreHorizontal className="h-4 w-4" />
+                                      <span className="sr-only">Toggle menu</span>
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => handleViewDetails(candidate)}>View Details</DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuSub>
+                                      <DropdownMenuSubTrigger>Change Stage</DropdownMenuSubTrigger>
+                                      <DropdownMenuSubContent>
+                                        <DropdownMenuItem>Applied</DropdownMenuItem>
+                                        <DropdownMenuItem>Screening</DropdownMenuItem>
+                                        <DropdownMenuItem>Interviewing</DropdownMenuItem>
+                                        <DropdownMenuItem>Offer</DropdownMenuItem>
+                                        <DropdownMenuItem>Hired</DropdownMenuItem>
+                                      </DropdownMenuSubContent>
+                                    </DropdownMenuSub>
+                                    <DropdownMenuItem>Send Message</DropdownMenuItem>
+                                    <DropdownMenuItem className="text-red-600">Reject</DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                   </Card>
                 </TabsContent>
             </Tabs>
         </div>
       </div>
+      <CandidateDetailsSheet candidate={selectedCandidate} open={isSheetOpen} onOpenChange={setIsSheetOpen} />
     </DashboardLayout>
   );
 }
