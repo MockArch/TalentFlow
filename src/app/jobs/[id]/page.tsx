@@ -14,33 +14,17 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Users, UserCheck, Briefcase, Star, MessageSquare, ChevronDown, MoreHorizontal } from 'lucide-react';
+import { CalendarDays, Users, Briefcase, Star, MessageSquare, UserCheck } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Checkbox } from '@/components/ui/checkbox';
 import { candidates } from '@/lib/data';
 import type { Candidate } from '@/lib/types';
 
 
-const initialJobDetails = {
+const jobDetails = {
   title: 'Senior Frontend Developer',
-  status: 'Open' as 'Open' | 'On Hold' | 'Closed',
+  status: 'Open',
   postedDate: 'June 29th, 2025',
   hiringPanel: ['John Smith', 'Jane Doe'],
   stats: {
@@ -55,8 +39,8 @@ const matchedCandidates = [
   {
     name: 'Sarah Johnson',
     role: 'Senior Frontend Developer',
-    avatar: 'https://placehold.co/100x100.png?text=SJ',
-    stage: 'Interviewing',
+    avatar: 'https://placehold.co/100x100.png',
+    stage: 'Interview',
     matchScore: 95,
     topSkills: ['React', 'TypeScript', 'Node.js', '+4'],
     id: 'CAN-008'
@@ -64,8 +48,8 @@ const matchedCandidates = [
   {
     name: 'Olivia Miller',
     role: 'Software Engineer in Test',
-    avatar: 'https://placehold.co/100x100.png?text=OM',
-    stage: 'Interviewing',
+    avatar: 'https://placehold.co/100x100.png',
+    stage: 'Interview',
     matchScore: 93,
     topSkills: ['Java', 'Selenium', 'Appium', '+2'],
     id: 'CAN-009'
@@ -73,7 +57,7 @@ const matchedCandidates = [
   {
     name: 'Emily Rodriguez',
     role: 'Backend Developer',
-    avatar: 'https://placehold.co/100x100.png?text=ER',
+    avatar: 'https://placehold.co/100x100.png',
     stage: 'Screening',
     matchScore: 92,
     topSkills: ['Java', 'Spring Boot', 'Microservices', '+2'],
@@ -82,8 +66,8 @@ const matchedCandidates = [
   {
     name: 'Amanda Brown',
     role: 'Data Scientist',
-    avatar: 'https://placehold.co/100x100.png?text=AB',
-    stage: 'Interviewing',
+    avatar: 'https://placehold.co/100x100.png',
+    stage: 'Interview',
     matchScore: 91,
     topSkills: ['Python', 'R', 'TensorFlow', '+2'],
     id: 'CAN-011'
@@ -91,8 +75,8 @@ const matchedCandidates = [
   {
     name: 'David Lee',
     role: 'DevOps Engineer',
-    avatar: 'https://placehold.co/100x100.png?text=DL',
-    stage: 'Sourced',
+    avatar: 'https://placehold.co/100x100.png',
+    stage: 'New',
     matchScore: 90,
     topSkills: ['AWS', 'Terraform', 'Jenkins', '+3'],
     id: 'CAN-005'
@@ -100,8 +84,8 @@ const matchedCandidates = [
   {
     name: 'Kevin Taylor',
     role: 'UX/UI Designer',
-    avatar: 'https://placehold.co/100x100.png?text=KT',
-    stage: 'Sourced',
+    avatar: 'https://placehold.co/100x100.png',
+    stage: 'New',
     matchScore: 89,
     topSkills: ['Figma', 'Adobe XD', 'Sketch', '+2'],
     id: 'CAN-012'
@@ -109,32 +93,12 @@ const matchedCandidates = [
 ];
 
 
-const stageVariant: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
-  Sourced: 'outline',
-  Applied: 'secondary',
-  Interviewing: 'default',
-  Offer: 'default',
-  Hired: 'default',
-  Screening: 'secondary',
-};
-
 const stageColor: { [key: string]: string } = {
-  Interviewing: 'bg-blue-500 text-white',
-  Offer: 'bg-purple-500 text-white',
-  Hired: 'bg-green-500 text-white',
+  Interview: 'bg-purple-100 text-purple-800',
+  Screening: 'bg-yellow-100 text-yellow-800',
+  New: 'bg-blue-100 text-blue-800',
 };
 
-const statusVariant: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
-  Open: 'default',
-  'On Hold': 'secondary',
-  Closed: 'destructive',
-};
-
-const statusColor: { [key: string]: string } = {
-    Open: 'bg-green-100 text-green-800',
-    'On Hold': 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    Closed: 'bg-red-100 text-red-800 border-red-200',
-};
 
 const StatCard = ({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: number }) => (
   <Card className="bg-muted/50 border-none shadow-none">
@@ -164,7 +128,7 @@ const CandidateCard = ({ name, role, avatar, stage, matchScore, topSkills }: (ty
                 <p className="text-sm text-muted-foreground">{role}</p>
             </div>
         </div>
-        <Badge variant={stageVariant[stage]} className={cn('whitespace-nowrap', stageColor[stage])}>
+        <Badge variant="secondary" className={cn('whitespace-nowrap font-medium', stageColor[stage])}>
             {stage}
         </Badge>
       </div>
@@ -200,149 +164,21 @@ const CandidateCard = ({ name, role, avatar, stage, matchScore, topSkills }: (ty
   </Card>
 );
 
-const AllCandidatesTable = ({ allCandidates }: { allCandidates: Candidate[] }) => {
-    const [selectedRowIds, setSelectedRowIds] = React.useState<string[]>([]);
-
-    const handleSelectAll = (checked: boolean | 'indeterminate') => {
-        if (checked === true) {
-            setSelectedRowIds(allCandidates.map(c => c.id));
-        } else {
-            setSelectedRowIds([]);
-        }
-    };
-
-    const handleSelectRow = (id: string, checked: boolean) => {
-        if (checked) {
-            setSelectedRowIds(prev => [...prev, id]);
-        } else {
-            setSelectedRowIds(prev => prev.filter(rowId => rowId !== id));
-        }
-    };
-
-    const isAllSelected = selectedRowIds.length > 0 && selectedRowIds.length === allCandidates.length;
-    const isSomeSelected = selectedRowIds.length > 0 && selectedRowIds.length < allCandidates.length;
-
-    return (
-        <div className="space-y-4">
-            <div className="flex items-center gap-4">
-                <p className="text-sm text-muted-foreground">
-                    {selectedRowIds.length} of {allCandidates.length} selected.
-                </p>
-                {selectedRowIds.length > 0 && (
-                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm">Change Stage</Button>
-                        <Button variant="outline" size="sm">Send Message</Button>
-                        <Button variant="destructive" size="sm">Reject</Button>
-                    </div>
-                )}
-            </div>
-            <div className="rounded-lg border">
-                 <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead className="w-12">
-                                <Checkbox 
-                                    checked={isAllSelected || (isSomeSelected ? 'indeterminate' : false)}
-                                    onCheckedChange={handleSelectAll}
-                                    aria-label="Select all rows"
-                                />
-                            </TableHead>
-                            <TableHead>Candidate</TableHead>
-                            <TableHead>Stage</TableHead>
-                            <TableHead>Applied Date</TableHead>
-                            <TableHead className="w-12"><span className="sr-only">Actions</span></TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {allCandidates.map(candidate => (
-                            <TableRow key={candidate.id} data-state={selectedRowIds.includes(candidate.id) ? "selected" : ""}>
-                                <TableCell>
-                                    <Checkbox 
-                                        checked={selectedRowIds.includes(candidate.id)}
-                                        onCheckedChange={(checked) => handleSelectRow(candidate.id, !!checked)}
-                                        aria-label={`Select row for ${candidate.name}`}
-                                    />
-                                </TableCell>
-                                 <TableCell>
-                                    <div className="flex items-center gap-3">
-                                      <Avatar className="h-10 w-10">
-                                        <AvatarImage src={candidate.avatar} alt={candidate.name} data-ai-hint="person" />
-                                        <AvatarFallback>{candidate.name.charAt(0)}</AvatarFallback>
-                                      </Avatar>
-                                      <div>
-                                        <div className="font-medium">{candidate.name}</div>
-                                        <div className="text-sm text-muted-foreground">
-                                          {candidate.email}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </TableCell>
-                                <TableCell>
-                                    <Badge variant={stageVariant[candidate.stage]} className={stageColor[candidate.stage]}>
-                                        {candidate.stage}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>{candidate.appliedDate}</TableCell>
-                                <TableCell>
-                                    <DropdownMenu>
-                                      <DropdownMenuTrigger asChild>
-                                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                                          <MoreHorizontal className="h-4 w-4" />
-                                          <span className="sr-only">Toggle menu</span>
-                                        </Button>
-                                      </DropdownMenuTrigger>
-                                      <DropdownMenuContent align="end">
-                                        <DropdownMenuItem>View Profile</DropdownMenuItem>
-                                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                                        <DropdownMenuItem>Delete</DropdownMenuItem>
-                                      </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
-        </div>
-    )
-}
 
 export default function JobDetailsPage({ params }: { params: { id: string } }) {
-  const [jobDetails, setJobDetails] = React.useState(initialJobDetails);
-  const jobStatuses: Array<'Open' | 'On Hold' | 'Closed'> = ['Open', 'On Hold', 'Closed'];
 
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-8">
         <div>
           <p className="text-muted-foreground mb-2">Job Details</p>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div className='space-y-2'>
                 <h1 className="text-3xl font-bold flex items-center gap-3">
                     {jobDetails.title}
-                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className={cn("flex items-center gap-2", statusColor[jobDetails.status])}>
-                           <Badge variant="outline" className={cn('px-0 py-0 border-none shadow-none', statusColor[jobDetails.status])}>
-                              {jobDetails.status}
-                           </Badge>
-                           <ChevronDown className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        {jobStatuses.map(status => (
-                          <DropdownMenuItem 
-                            key={status} 
-                            onSelect={() => setJobDetails(prev => ({...prev, status: status}))}
-                            className={cn(jobDetails.status === status && "bg-muted")}
-                          >
-                            {status}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <Badge className="bg-green-100 text-green-800 border-green-200 text-sm font-medium">Open</Badge>
                 </h1>
-                <p className="text-muted-foreground mt-2 flex items-center gap-2">
+                <p className="text-muted-foreground flex items-center gap-2">
                     <CalendarDays className="h-4 w-4" />
                     Posted on {jobDetails.postedDate}
                 </p>
@@ -381,7 +217,7 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
                     </div>
                 </TabsContent>
                 <TabsContent value="all-candidates" className="mt-6">
-                   <AllCandidatesTable allCandidates={candidates} />
+                   <p>All candidates table will go here.</p>
                 </TabsContent>
             </Tabs>
         </div>
