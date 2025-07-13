@@ -3,15 +3,15 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSidebar, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { LayoutDashboard, Users, Settings, LogOut, CalendarCheck, BarChart, HelpCircle } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, LogOut, Briefcase, Upload, BarChart, HelpCircle, GitMerge } from 'lucide-react';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/candidates', label: 'Candidates', icon: Users },
-  { href: '/interviews', label: 'Interviews', icon: CalendarCheck },
-  { href: '/skills', label: 'Skills', icon: BarChart },
+  { href: '/jobs', label: 'Jobs', icon: Briefcase },
+  { href: '/panelists', label: 'Panelists', icon: Users },
+  { href: '/upload-resume', label: 'Upload Resume', icon: Upload },
   { href: '/analytics', label: 'Analytics', icon: BarChart },
-  { href: '/settings', label: 'Settings', icon: Settings },
+  { href: '/integrations', label: 'Integrations', icon: GitMerge },
   { href: '/help', label: 'Help', icon: HelpCircle },
 ];
 
