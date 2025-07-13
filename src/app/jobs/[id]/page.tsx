@@ -1,4 +1,7 @@
 
+'use client';
+
+import * as React from 'react';
 import { DashboardLayout } from '@/components/dashboard-layout';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,9 +20,9 @@ import { CalendarDays, Users, UserCheck, Briefcase, Star, MessageSquare } from '
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 
-const jobDetails = {
+const initialJobDetails = {
   title: 'Senior Frontend Developer',
-  status: 'Open',
+  status: 'Open' as 'Open' | 'On Hold' | 'Closed',
   postedDate: 'June 29th, 2025',
   hiringPanel: ['John Smith', 'Jane Doe'],
   stats: {
@@ -86,6 +89,8 @@ const statusVariant: { [key: string]: 'default' | 'secondary' | 'destructive' | 
   Interview: 'default',
   Screening: 'secondary',
   New: 'outline',
+  'On Hold': 'secondary',
+  Closed: 'destructive',
 };
 
 const statusColor: { [key: string]: string } = {
@@ -93,6 +98,8 @@ const statusColor: { [key: string]: string } = {
     Interview: 'bg-purple-100 text-purple-800',
     Screening: 'bg-yellow-100 text-yellow-800',
     New: 'bg-blue-100 text-blue-800',
+    'On Hold': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    Closed: 'bg-red-100 text-red-800 border-red-200',
 };
 
 const StatCard = ({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: number }) => (
@@ -160,6 +167,8 @@ const CandidateCard = ({ name, role, avatar, status, matchScore, topSkills }: (t
 );
 
 export default function JobDetailsPage({ params }: { params: { id: string } }) {
+  const [jobDetails, setJobDetails] = React.useState(initialJobDetails);
+
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-8">
@@ -169,7 +178,9 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
             <div>
                 <h1 className="text-3xl font-bold flex items-center gap-3">
                     {jobDetails.title}
-                    <Badge variant={statusVariant[jobDetails.status]} className={statusColor[jobDetails.status]}>{jobDetails.status}</Badge>
+                     <Badge variant={statusVariant[jobDetails.status]} className={cn(statusColor[jobDetails.status])}>
+                        {jobDetails.status}
+                    </Badge>
                 </h1>
                 <p className="text-muted-foreground mt-2 flex items-center gap-2">
                     <CalendarDays className="h-4 w-4" />
