@@ -76,7 +76,7 @@ export default function Dashboard() {
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
+        <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">Dashboard</h1>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -151,7 +151,7 @@ export default function Dashboard() {
                     placeholder="e.g., 'Find me a senior react developer...'"
                     className="pr-12 h-12"
                   />
-                  <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 bg-gray-700 hover:bg-gray-800 text-white">
+                  <Button variant="ghost" size="icon" className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 bg-gray-700 hover:bg-gray-800 text-white dark:bg-gray-800 dark:hover:bg-gray-700">
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
@@ -198,29 +198,17 @@ export default function Dashboard() {
                 <CardHeader>
                     <CardTitle>Interview Calendar</CardTitle>
                 </CardHeader>
-                <CardContent className="p-0">
+                <CardContent>
                      <Calendar
                         mode="single"
                         selected={date}
                         onSelect={setDate}
                         className="p-0"
                         month={new Date('2025-07-01')}
-                        components={{
-                            ChevronLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
-                            ChevronRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
-                        }}
                         classNames={{
-                            months: "flex flex-col sm:flex-row",
-                            month: "space-y-4 p-4",
-                            caption_label: "text-lg font-semibold",
-                            nav_button: "h-8 w-8",
-                            head_cell: "w-full text-muted-foreground font-normal text-sm pb-2",
-                            row: "flex w-full mt-0",
-                            cell: "h-12 w-full text-center text-sm p-0 relative [&:has([aria-selected])]:bg-primary/10 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                            day: "h-12 w-full p-0 font-normal aria-selected:opacity-100",
-                            day_selected: "bg-primary text-primary-foreground rounded-md hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-                            day_today: "bg-accent text-accent-foreground rounded-md",
-                            day_disabled: "text-muted-foreground opacity-50",
+                          head_cell: 'w-full font-normal text-sm',
+                          cell: 'w-full text-center text-sm p-0',
+                          day: 'w-full h-10',
                         }}
                      />
                 </CardContent>
@@ -231,7 +219,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {upcomingInterviews.map((interview) => (
-                    <div key={interview.date} className="flex items-center gap-4">
+                    <div key={interview.name} className="flex items-center gap-4">
                         <div className="flex flex-col items-center justify-center p-2 rounded-md bg-muted">
                             <span className="text-xs font-semibold text-muted-foreground">{interview.month}</span>
                             <span className="text-lg font-bold">{interview.date}</span>
