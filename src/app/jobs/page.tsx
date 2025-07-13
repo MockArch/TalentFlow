@@ -41,7 +41,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 
 
-const jobOpenings = [
+const initialJobOpenings = [
   {
     title: 'Senior Frontend Developer',
     status: 'Open',
@@ -110,15 +110,38 @@ const statusColor: { [key: string]: string } = {
     Closed: 'bg-red-100 text-red-800 border-red-200',
 };
 
-function CreateJobDialog() {
+type JobOpening = (typeof initialJobOpenings)[0];
+
+function CreateJobDialog({ onAddJob }: { onAddJob: (newJob: JobOpening) => void }) {
     const [dialogOpen, setDialogOpen] = React.useState(false);
-    const [selectedPanelists, setSelectedPanelists] = React.useState<User[]>([]);
     const [popoverOpen, setPopoverOpen] = React.useState(false);
+    
+    const [title, setTitle] = React.useState('');
+    const [description, setDescription] = React.useState('');
+    const [openings, setOpenings] = React.useState(1);
+    const [selectedPanelists, setSelectedPanelists] = React.useState<User[]>([]);
 
     const handleCreateJob = () => {
-        // In a real app, you'd handle form submission here.
-        console.log("Creating job...");
-        setDialogOpen(false); // Close the dialog on creation
+        if (!title || !description) return;
+
+        const newJob: JobOpening = {
+            title,
+            description,
+            openings,
+            status: 'Open',
+            applicants: 0,
+            inPipeline: 0,
+            hired: 0,
+        };
+        onAddJob(newJob);
+        
+        // Reset form
+        setTitle('');
+        setDescription('');
+        setOpenings(1);
+        setSelectedPanelists([]);
+        
+        setDialogOpen(false);
     }
 
     return (
@@ -139,16 +162,16 @@ function CreateJobDialog() {
             <div className="grid gap-6 py-4">
                 <div className="space-y-2">
                     <Label htmlFor="job-title">Job Title</Label>
-                    <Input id="job-title" placeholder="e.g. Senior Frontend Developer" />
+                    <Input id="job-title" placeholder="e.g. Senior Frontend Developer" value={title} onChange={(e) => setTitle(e.target.value)} />
                 </div>
                  <div className="space-y-2">
                     <Label htmlFor="job-description">Job Description</Label>
-                    <Textarea id="job-description" placeholder="Enter a detailed job description..." rows={5} />
+                    <Textarea id="job-description" placeholder="Enter a detailed job description..." rows={5} value={description} onChange={(e) => setDescription(e.target.value)} />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label htmlFor="openings">Number of Openings</Label>
-                        <Input id="openings" type="number" placeholder="e.g. 2" />
+                        <Input id="openings" type="number" placeholder="e.g. 2" value={openings} onChange={(e) => setOpenings(parseInt(e.target.value, 10) || 1)} min="1" />
                     </div>
                      <div className="space-y-2">
                         <Label>Assign Panelists</Label>
@@ -214,6 +237,12 @@ function CreateJobDialog() {
 
 
 export default function JobsPage() {
+  const [jobOpenings, setJobOpenings] = React.useState<JobOpening[]>(initialJobOpenings);
+
+  const handleAddJob = (newJob: JobOpening) => {
+    setJobOpenings(currentJobs => [newJob, ...currentJobs]);
+  };
+
   return (
     <DashboardLayout>
       <div className="flex flex-col gap-6">
@@ -222,7 +251,7 @@ export default function JobsPage() {
             <h1 className="text-3xl font-bold font-headline">Jobs</h1>
             <p className="text-lg text-muted-foreground mt-1">Open Positions</p>
           </div>
-          <CreateJobDialog />
+          <CreateJobDialog onAddJob={handleAddJob} />
         </div>
 
         <Tabs defaultValue="all">
@@ -267,7 +296,7 @@ export default function JobsPage() {
 }
 
 
-function JobCard({ title, status, description, openings, applicants, inPipeline, hired }: (typeof jobOpenings)[0]) {
+function JobCard({ title, status, description, openings, applicants, inPipeline, hired }: JobOpening) {
     return (
         <Card className="flex flex-col">
             <CardHeader>
@@ -311,3 +340,5 @@ function JobCard({ title, status, description, openings, applicants, inPipeline,
         </Card>
     );
 }
+
+    
