@@ -16,9 +16,16 @@ import {
 } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Users, UserCheck, Briefcase, Star, MessageSquare } from 'lucide-react';
+import { CalendarDays, Users, UserCheck, Briefcase, Star, MessageSquare, ChevronDown } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
 
 const initialJobDetails = {
   title: 'Senior Frontend Developer',
@@ -143,7 +150,7 @@ const CandidateCard = ({ name, role, avatar, status, matchScore, topSkills }: (t
             </div>
             <span className="font-semibold">{matchScore}%</span>
         </div>
-        <Progress value={matchScore} />
+        <Progress value={matchScore} className="h-1.5" />
       </div>
 
        <div className="space-y-2 mb-6">
@@ -168,6 +175,7 @@ const CandidateCard = ({ name, role, avatar, status, matchScore, topSkills }: (t
 
 export default function JobDetailsPage({ params }: { params: { id: string } }) {
   const [jobDetails, setJobDetails] = React.useState(initialJobDetails);
+  const jobStatuses: Array<'Open' | 'On Hold' | 'Closed'> = ['Open', 'On Hold', 'Closed'];
 
   return (
     <DashboardLayout>
@@ -178,9 +186,27 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
             <div>
                 <h1 className="text-3xl font-bold flex items-center gap-3">
                     {jobDetails.title}
-                     <Badge variant={statusVariant[jobDetails.status]} className={cn(statusColor[jobDetails.status])}>
-                        {jobDetails.status}
-                    </Badge>
+                     <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className={cn("flex items-center gap-2", statusColor[jobDetails.status])}>
+                           <Badge variant={statusVariant[jobDetails.status]} className={cn('px-0 py-0 border-none shadow-none', statusColor[jobDetails.status])}>
+                              {jobDetails.status}
+                           </Badge>
+                           <ChevronDown className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        {jobStatuses.map(status => (
+                          <DropdownMenuItem 
+                            key={status} 
+                            onSelect={() => setJobDetails(prev => ({...prev, status: status}))}
+                            className={cn(jobDetails.status === status && "bg-muted")}
+                          >
+                            {status}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                 </h1>
                 <p className="text-muted-foreground mt-2 flex items-center gap-2">
                     <CalendarDays className="h-4 w-4" />
