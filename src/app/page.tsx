@@ -2,7 +2,7 @@
 "use client"
 
 import * as React from 'react';
-import { addMonths, subMonths } from 'date-fns';
+import { addMonths, subMonths, format, parseISO } from 'date-fns';
 import {
   Briefcase,
   Users,
@@ -34,6 +34,9 @@ import { DashboardLayout } from '@/components/dashboard-layout';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UserNav } from '@/components/user-nav';
+import { interviews as allInterviews } from '@/lib/data';
+import type { Interview } from '@/lib/types';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 const quickActions = [
   { label: 'Add Candidate', icon: UserPlus, href: "/candidates" },
@@ -64,13 +67,19 @@ const recentActivity = [
   },
 ];
 
-const upcomingInterviews = [
-    { date: "14", month: "Jul", name: "James Brown", role: "Cultural Fit Interview", time: "1:52 PM", interviewer: "Sarah Lee" },
-    { date: "15", month: "Jul", name: "Sarah Johnson", role: "Technical Interview", time: "1:52 PM", interviewer: "John Smith, Jane Doe" },
-    { date: "16", month: "Jul", name: "Linda Smith", role: "Technical Interview", time: "1:52 PM", interviewer: "David Green" },
-    { date: "18", month: "Jul", name: "Emily Rodriguez", role: "HR Screening Interview", time: "1:52 PM", interviewer: "HR Team" },
-    { date: "21", month: "Jul", name: "Alex Ray", role: "Final Interview", time: "1:52 PM", interviewer: "Alice Williams, Hiring Manager" },
-];
+const upcomingInterviews = allInterviews
+    .filter(i => i.status === 'Scheduled')
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, 5)
+    .map(interview => ({
+        date: format(parseISO(interview.date), 'dd'),
+        month: format(parseISO(interview.date), 'MMM'),
+        name: interview.candidate.name,
+        role: interview.role,
+        time: interview.time,
+        interviewer: interview.panelists.map(p => p.name).join(', ')
+    }));
+
 
 const EventIndicator = ({ count }: { count: number }) => (
     <div className="absolute top-0.5 right-0.5 h-4 w-4 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
@@ -80,21 +89,30 @@ const EventIndicator = ({ count }: { count: number }) => (
 
 
 export default function Dashboard() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date('2025-07-13'));
-  const [currentMonth, setCurrentMonth] = React.useState(new Date('2025-07-01'));
-  
-  const interviewCounts = React.useMemo(() => {
-    const counts: { [day: number]: number } = {};
-    upcomingInterviews.forEach(interview => {
-        const day = parseInt(interview.date, 10);
-        if (counts[day]) {
-            counts[day]++;
-        } else {
-            counts[day] = 1;
-        }
+  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [currentMonth, setCurrentMonth] = React.useState(new Date());
+
+  const interviewCountsByDay = React.useMemo(() => {
+    const counts: { [day: string]: number } = {};
+    allInterviews.forEach(interview => {
+      const interviewDate = format(parseISO(interview.date), 'yyyy-MM-dd');
+      counts[interviewDate] = (counts[interviewDate] || 0) + 1;
     });
     return counts;
   }, []);
+
+  const interviewsByDay = React.useMemo(() => {
+    const groups: { [day: string]: Interview[] } = {};
+    allInterviews.forEach(interview => {
+        const interviewDate = format(parseISO(interview.date), 'yyyy-MM-dd');
+        if (!groups[interviewDate]) {
+            groups[interviewDate] = [];
+        }
+        groups[interviewDate].push(interview);
+    });
+    return groups;
+  }, []);
+
 
   const handlePrevMonth = () => {
     setCurrentMonth(subMonths(currentMonth, 1));
@@ -277,13 +295,55 @@ export default function Dashboard() {
                         }}
                         components={{
                             DayContent: ({ date: d }) => {
-                                const interviewCount = (d.getMonth() === 6 && d.getFullYear() === 2025) ? interviewCounts[d.getDate()] : undefined;
-                                return (
+                                const formattedDate = format(d, 'yyyy-MM-dd');
+                                const interviewCount = interviewCountsByDay[formattedDate];
+                                const interviewsForDay = interviewsByDay[formattedDate];
+
+                                const dayContent = (
                                     <div className="relative flex justify-center items-center h-10 w-10">
                                         <span>{d.getDate()}</span>
                                         {interviewCount && <EventIndicator count={interviewCount} />}
                                     </div>
                                 );
+
+                                if (interviewsForDay && interviewsForDay.length > 0) {
+                                    return (
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                {dayContent}
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-80">
+                                                <div className="grid gap-4">
+                                                    <div className="space-y-2">
+                                                        <h4 className="font-medium leading-none">
+                                                            Interviews for {format(d, 'MMMM d, yyyy')}
+                                                        </h4>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            {interviewsForDay.length} scheduled interview(s).
+                                                        </p>
+                                                    </div>
+                                                    <div className="grid gap-2">
+                                                        {interviewsForDay.map((interview) => (
+                                                            <div key={interview.id} className="grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+                                                                <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                                                                <div className="grid gap-1">
+                                                                    <p className="text-sm font-medium leading-none">
+                                                                        {interview.candidate.name}
+                                                                    </p>
+                                                                    <p className="text-sm text-muted-foreground">
+                                                                        {interview.time} - {interview.role}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+                                    );
+                                }
+
+                                return dayContent;
                             },
                         }}
                      />
@@ -295,8 +355,8 @@ export default function Dashboard() {
                     <CardDescription>Based on your calendar</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {upcomingInterviews.map((interview) => (
-                    <div key={interview.name} className="flex items-center gap-4">
+                    {upcomingInterviews.map((interview, index) => (
+                    <div key={`${interview.name}-${index}`} className="flex items-center gap-4">
                         <div className="flex flex-col items-center justify-center p-2 rounded-md bg-muted aspect-square h-14">
                             <span className="text-xs font-semibold text-muted-foreground">{interview.month}</span>
                             <span className="text-lg font-bold">{interview.date}</span>
