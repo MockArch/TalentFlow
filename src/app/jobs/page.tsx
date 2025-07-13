@@ -337,7 +337,7 @@ function JobCard({ id, title, status, description, openings, applicants, inPipel
                 </div>
             </CardContent>
             <CardFooter>
-                 <Button asChild className="w-full bg-gray-800 text-white hover:bg-gray-700">
+                 <Button asChild className="w-full">
                     <Link href={`/jobs/${id}`}>
                         View Job
                         <ArrowRight className="ml-2 h-4 w-4" />
