@@ -302,7 +302,7 @@ export default function Dashboard() {
                                 const dayContent = (
                                     <div className="relative flex justify-center items-center h-10 w-10">
                                         <span>{d.getDate()}</span>
-                                        {interviewCount && <EventIndicator count={interviewCount} />}
+                                        {interviewCount > 0 && <EventIndicator count={interviewCount} />}
                                     </div>
                                 );
 
