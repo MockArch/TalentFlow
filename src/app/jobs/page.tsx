@@ -20,6 +20,20 @@ import { Badge } from '@/components/ui/badge';
 import { Briefcase, Users, UserCheck, PlusCircle, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { users as panelists } from '@/lib/data';
 
 const jobOpenings = [
   {
@@ -100,10 +114,57 @@ export default function JobsPage() {
             <h1 className="text-3xl font-bold font-headline">Jobs</h1>
             <p className="text-lg text-muted-foreground mt-1">Open Positions</p>
           </div>
-          <Button>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Job
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+                <Button>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add Job
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle>Create a New Job Opening</DialogTitle>
+                    <DialogDescription>
+                        Fill out the details below to post a new job.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-6 py-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="job-title">Job Title</Label>
+                        <Input id="job-title" placeholder="e.g. Senior Frontend Developer" />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="job-description">Job Description</Label>
+                        <Textarea id="job-description" placeholder="Enter a detailed job description..." rows={5} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="openings">Number of Openings</Label>
+                            <Input id="openings" type="number" placeholder="e.g. 2" />
+                        </div>
+                         <div className="space-y-2">
+                            <Label htmlFor="panelists">Assign Panelists</Label>
+                             <Select>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select panelists (multi-select coming soon)" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {panelists.map((p) => (
+                                    <SelectItem key={p.email} value={p.email}>
+                                      {p.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                        </div>
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button variant="outline">Cancel</Button>
+                    <Button type="submit">Create Job</Button>
+                </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <Tabs defaultValue="all">
