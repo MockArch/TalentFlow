@@ -174,7 +174,7 @@ const CandidateDetailsSheet = ({ candidate, open, onOpenChange }: { candidate: C
               </div>
             </div>
             <SheetClose asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-muted absolute top-4 right-4">
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full absolute top-4 right-4">
                     <X className="h-5 w-5 text-muted-foreground" />
                 </Button>
             </SheetClose>
@@ -324,6 +324,7 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
   const [matchedCandidates, setMatchedCandidates] = React.useState<MatchedCandidate[]>([]);
   
   React.useEffect(() => {
+    // This is just mock data generation. In a real app, you'd fetch this.
     const candidatesToProcess = [allCandidates[0], allCandidates[6], allCandidates[2], allCandidates[4]];
     const processedCandidates = candidatesToProcess.map(c => ({
         ...c, 
