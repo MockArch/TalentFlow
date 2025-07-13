@@ -15,7 +15,7 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Users, Briefcase, Star, MessageSquare, UserCheck, Mail, Phone, MapPin, Award, Tag, ThumbsUp, ThumbsDown, X, Building } from 'lucide-react';
+import { CalendarDays, Users, Briefcase, Star, MessageSquare, UserCheck, Mail, Phone, MapPin, Award, Tag, ThumbsUp, ThumbsDown, X, Building, CheckCircle, CircleX } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { candidates as allCandidates } from '@/lib/data';
@@ -44,6 +44,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from '@/comp
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const jobDetailsData = {
   title: 'Senior Frontend Developer',
@@ -157,7 +161,7 @@ const CandidateDetailsSheet = ({ candidate, open, onOpenChange }: { candidate: C
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-2xl p-0 overflow-y-auto">
-        <div className="p-6">
+        <div className="p-6 relative">
           <SheetHeader className="flex flex-row items-start justify-between">
             <div className="flex items-center gap-4">
               <Avatar className="h-20 w-20 border">
@@ -170,9 +174,9 @@ const CandidateDetailsSheet = ({ candidate, open, onOpenChange }: { candidate: C
               </div>
             </div>
             <SheetClose asChild>
-              <Button variant="ghost" size="icon">
-                <X className="h-5 w-5" />
-              </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-muted absolute top-4 right-4">
+                    <X className="h-5 w-5 text-muted-foreground" />
+                </Button>
             </SheetClose>
           </SheetHeader>
           <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm text-muted-foreground mt-6">
@@ -250,7 +254,38 @@ const CandidateDetailsSheet = ({ candidate, open, onOpenChange }: { candidate: C
           <div>
              <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold text-foreground flex items-center gap-2"><MessageSquare className="h-5 w-5" /> Hiring Manager Feedback</h3>
-                <Button variant="outline" size="sm">Add Feedback</Button>
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">Add Feedback</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                        <DialogTitle>Provide Feedback</DialogTitle>
+                        <DialogDescription>
+                            Share your thoughts on {candidate.name}. Your feedback is crucial for making the right hiring decision.
+                        </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-2">
+                            <Textarea placeholder="Enter your detailed feedback here..." rows={6} />
+                            <RadioGroup defaultValue="positive">
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="positive" id="r-positive" />
+                                    <Label htmlFor="r-positive" className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-green-600" /> Positive</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="negative" id="r-negative" />
+                                    <Label htmlFor="r-negative" className="flex items-center gap-2"><CircleX className="h-4 w-4 text-red-600" /> Negative</Label>
+                                </div>
+                            </RadioGroup>
+                        </div>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button variant="ghost">Cancel</Button>
+                            </DialogClose>
+                            <Button>Submit Feedback</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
              </div>
              <div className="space-y-4">
                 {candidateDetails.feedback.map((fb, index) => (
@@ -292,14 +327,14 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
     const candidatesToProcess = [allCandidates[0], allCandidates[6], allCandidates[2], allCandidates[4]];
     const processedCandidates = candidatesToProcess.map(c => ({
         ...c, 
-        matchScore: Math.floor(Math.random() * 11) + 88, 
+        matchScore: Math.floor(Math.random() * (98 - 88 + 1)) + 88, 
         topSkills: c.qualifications.split(', ').slice(0,3)
     }));
     setMatchedCandidates(processedCandidates);
   }, []);
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
+  const handleSelectAll = (checked: boolean | string) => {
+    if (checked === true) {
       setSelectedRows(allCandidates.map(c => c.id));
     } else {
       setSelectedRows([]);
@@ -409,13 +444,11 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead padding="checkbox">
+                            <TableHead>
                               <Checkbox
-                                checked={isAllSelected}
-                                onCheckedChange={(checked) => handleSelectAll(!!checked)}
+                                checked={isAllSelected || (isIndeterminate ? 'indeterminate' : false)}
+                                onCheckedChange={handleSelectAll}
                                 aria-label="Select all"
-                                // @ts-ignore
-                                indeterminate={isIndeterminate.toString()}
                               />
                             </TableHead>
                             <TableHead>Candidate</TableHead>
@@ -427,7 +460,7 @@ export default function JobDetailsPage({ params }: { params: { id: string } }) {
                         <TableBody>
                           {allCandidates.map((candidate) => (
                             <TableRow key={candidate.id} data-state={selectedRows.includes(candidate.id) && "selected"}>
-                              <TableCell padding="checkbox">
+                              <TableCell>
                                 <Checkbox
                                   checked={selectedRows.includes(candidate.id)}
                                   onCheckedChange={(checked) => handleRowSelect(candidate.id, !!checked)}
