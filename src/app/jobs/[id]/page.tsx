@@ -282,7 +282,9 @@ const CandidateDetailsSheet = ({ candidate, open, onOpenChange }: { candidate: C
                             <DialogClose asChild>
                                 <Button variant="ghost">Cancel</Button>
                             </DialogClose>
-                            <Button>Submit Feedback</Button>
+                            <DialogClose asChild>
+                                <Button>Submit Feedback</Button>
+                            </DialogClose>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
