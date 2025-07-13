@@ -198,7 +198,7 @@ export default function Dashboard() {
                 <CardHeader>
                     <CardTitle>Interview Calendar</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-0">
                      <Calendar
                         mode="single"
                         selected={date}
@@ -210,9 +210,14 @@ export default function Dashboard() {
                             ChevronRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
                         }}
                         classNames={{
-                            head_cell: "w-full text-muted-foreground font-normal text-xs",
-                            cell: "h-10 w-full text-center text-sm p-0 relative [&:has([aria-selected])]:bg-primary/10 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                            day: "h-10 w-full p-0 font-normal aria-selected:opacity-100",
+                            months: "flex flex-col sm:flex-row",
+                            month: "space-y-4 p-4",
+                            caption_label: "text-lg font-semibold",
+                            nav_button: "h-8 w-8",
+                            head_cell: "w-full text-muted-foreground font-normal text-sm pb-2",
+                            row: "flex w-full mt-0",
+                            cell: "h-12 w-full text-center text-sm p-0 relative [&:has([aria-selected])]:bg-primary/10 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                            day: "h-12 w-full p-0 font-normal aria-selected:opacity-100",
                             day_selected: "bg-primary text-primary-foreground rounded-md hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
                             day_today: "bg-accent text-accent-foreground rounded-md",
                             day_disabled: "text-muted-foreground opacity-50",
@@ -250,5 +255,3 @@ export default function Dashboard() {
     </DashboardLayout>
   );
 }
-
-    
